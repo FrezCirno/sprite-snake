@@ -15,6 +15,7 @@
 		EC4C6429259B3714008F3051 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC4C6427259B3714008F3051 /* Main.storyboard */; };
 		EC4C642B259B3715008F3051 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC4C642A259B3715008F3051 /* Assets.xcassets */; };
 		EC4C642E259B3715008F3051 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC4C642C259B3715008F3051 /* LaunchScreen.storyboard */; };
+		EC4C6436259B3BE0008F3051 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = EC4C6435259B3BE0008F3051 /* assets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		EC4C642A259B3715008F3051 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EC4C642D259B3715008F3051 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EC4C642F259B3715008F3051 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EC4C6435259B3BE0008F3051 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = "sprite-snake/assets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +46,7 @@
 		EC4C6411259B3714008F3051 = {
 			isa = PBXGroup;
 			children = (
+				EC4C6435259B3BE0008F3051 /* assets */,
 				EC4C641C259B3714008F3051 /* sprite-snake */,
 				EC4C641B259B3714008F3051 /* Products */,
 			);
@@ -134,6 +137,7 @@
 				EC4C6429259B3714008F3051 /* Main.storyboard in Resources */,
 				EC4C6420259B3714008F3051 /* GameScene.sks in Resources */,
 				EC4C642B259B3715008F3051 /* Assets.xcassets in Resources */,
+				EC4C6436259B3BE0008F3051 /* assets in Resources */,
 				EC4C642E259B3715008F3051 /* LaunchScreen.storyboard in Resources */,
 				EC4C6422259B3714008F3051 /* Actions.sks in Resources */,
 			);

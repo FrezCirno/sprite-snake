@@ -24,24 +24,52 @@ class Snake {
     
     var preferredDistance: Double;
     var headPath: [Int];
-    var queuedSections = 0;
-    var loss = 0;
+    var queuedSections = 0.0;
+    var loss = 0.0;
     
     var sectionGroup: [rb_node];
     
     init(x:Float, y:Float, name:String) {
-        self.scale = 0.5;
         self.globalKey = g_globalKey;
         g_globalKey+=1;
-        self.preferredDistance = Snake.distanceIndex * self.scale;
+        
+        self.setScale(0.5);
         
     }
     
+    /**
+     * 更新时调用
+     */
     func update() {
         
     
     }
-
     
+    /**
+     *
+     */
+    func destroy(){
+    
+    }
 
+    func addSectionAtPosition(x:Int, y:Int, secSpriteKey:String = "circle") {
+        
+    }
+    
+    func findNextPointIndex(currentIndex:Int) {
+        
+    }
+    
+    func onOneStepComplete() {
+        
+    }
+    
+    func setScale(_ scale: Double) {
+        self.scale = scale;
+        self.preferredDistance = Double(Snake.distanceIndex) * self.scale;
+    }
+    
+    func incrementSize(amount: Double) {
+        self.queuedSections += amount;
+    }
 }

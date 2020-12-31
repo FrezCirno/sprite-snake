@@ -16,6 +16,9 @@
 		EC4C642B259B3715008F3051 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC4C642A259B3715008F3051 /* Assets.xcassets */; };
 		EC4C642E259B3715008F3051 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC4C642C259B3715008F3051 /* LaunchScreen.storyboard */; };
 		EC4C6436259B3BE0008F3051 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = EC4C6435259B3BE0008F3051 /* assets */; };
+		ECBA5EA8259DC29800973A05 /* MyScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = ECBA5EA7259DC29800973A05 /* MyScene.sks */; };
+		ECBA5EAC259DC3A500973A05 /* MenuScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = ECBA5EAB259DC3A500973A05 /* MenuScene.sks */; };
+		ECBA5EB0259DDCB400973A05 /* snake.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA5EAF259DDCB400973A05 /* snake.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +33,10 @@
 		EC4C642D259B3715008F3051 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EC4C642F259B3715008F3051 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC4C6435259B3BE0008F3051 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = "sprite-snake/assets"; sourceTree = "<group>"; };
+		ECBA5EA7259DC29800973A05 /* MyScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyScene.sks; sourceTree = "<group>"; };
+		ECBA5EAB259DC3A500973A05 /* MenuScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MenuScene.sks; sourceTree = "<group>"; };
+		ECBA5EAD259DC4C300973A05 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		ECBA5EAF259DDCB400973A05 /* snake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = snake.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +53,7 @@
 		EC4C6411259B3714008F3051 = {
 			isa = PBXGroup;
 			children = (
+				ECBA5EAD259DC4C300973A05 /* README.md */,
 				EC4C6435259B3BE0008F3051 /* assets */,
 				EC4C641C259B3714008F3051 /* sprite-snake */,
 				EC4C641B259B3714008F3051 /* Products */,
@@ -63,10 +71,10 @@
 		EC4C641C259B3714008F3051 /* sprite-snake */ = {
 			isa = PBXGroup;
 			children = (
+				ECBA5EAE259DDC9900973A05 /* objects */,
+				ECBA5EAA259DC33A00973A05 /* scenes */,
+				ECBA5EA9259DC32D00973A05 /* actions */,
 				EC4C641D259B3714008F3051 /* AppDelegate.swift */,
-				EC4C641F259B3714008F3051 /* GameScene.sks */,
-				EC4C6421259B3714008F3051 /* Actions.sks */,
-				EC4C6423259B3714008F3051 /* GameScene.swift */,
 				EC4C6425259B3714008F3051 /* GameViewController.swift */,
 				EC4C6427259B3714008F3051 /* Main.storyboard */,
 				EC4C642A259B3715008F3051 /* Assets.xcassets */,
@@ -74,6 +82,33 @@
 				EC4C642F259B3715008F3051 /* Info.plist */,
 			);
 			path = "sprite-snake";
+			sourceTree = "<group>";
+		};
+		ECBA5EA9259DC32D00973A05 /* actions */ = {
+			isa = PBXGroup;
+			children = (
+				EC4C6421259B3714008F3051 /* Actions.sks */,
+			);
+			path = actions;
+			sourceTree = "<group>";
+		};
+		ECBA5EAA259DC33A00973A05 /* scenes */ = {
+			isa = PBXGroup;
+			children = (
+				ECBA5EA7259DC29800973A05 /* MyScene.sks */,
+				EC4C6423259B3714008F3051 /* GameScene.swift */,
+				EC4C641F259B3714008F3051 /* GameScene.sks */,
+				ECBA5EAB259DC3A500973A05 /* MenuScene.sks */,
+			);
+			path = scenes;
+			sourceTree = "<group>";
+		};
+		ECBA5EAE259DDC9900973A05 /* objects */ = {
+			isa = PBXGroup;
+			children = (
+				ECBA5EAF259DDCB400973A05 /* snake.swift */,
+			);
+			path = objects;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,7 +174,9 @@
 				EC4C642B259B3715008F3051 /* Assets.xcassets in Resources */,
 				EC4C6436259B3BE0008F3051 /* assets in Resources */,
 				EC4C642E259B3715008F3051 /* LaunchScreen.storyboard in Resources */,
+				ECBA5EA8259DC29800973A05 /* MyScene.sks in Resources */,
 				EC4C6422259B3714008F3051 /* Actions.sks in Resources */,
+				ECBA5EAC259DC3A500973A05 /* MenuScene.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +187,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECBA5EB0259DDCB400973A05 /* snake.swift in Sources */,
 				EC4C6424259B3714008F3051 /* GameScene.swift in Sources */,
 				EC4C6426259B3714008F3051 /* GameViewController.swift in Sources */,
 				EC4C641E259B3714008F3051 /* AppDelegate.swift in Sources */,

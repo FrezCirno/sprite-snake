@@ -11,8 +11,57 @@ import GameplayKit
 
 class GameScene: SKScene {
     
+    /**
+     * 开始时，玩家的蛇自行移动，相机跟随蛇头
+     *  如果玩家的蛇死亡，摄像头停止移动，一段时间后，生成新的玩家
+     * 玩家点击屏幕，游戏开始，玩家输入id，蛇由玩家自行控制
+     * 玩家的蛇死亡，游戏结束，屏幕变灰，显示玩家分数，同时镜头跟随杀死玩家的蛇
+     */
+    enum GameStatus {
+        case idle    //初始化
+        case preview  //演示界面
+        case running    //游戏运行中
+        case over    //游戏结束
+    }
+    
+    var gameStatus: GameStatus = .idle  //表示当前游戏状态的变量，初始值为初始化状态
+    
+    /**
+     * 如何表示一条蛇：
+     *  head
+     */
+    
     private var label : SKLabelNode?
     private var spinnyNode : SKShapeNode?
+    private var snakeNode : SKSpriteNode?
+    
+    func restart()  {
+        
+        //游戏初始化处理方法
+        
+        gameStatus = .idle
+        
+    }
+    func startGame()  {
+        
+        //游戏开始处理方法
+        
+        gameStatus = .running
+        
+    }
+    func gameOver()  {
+        
+        //游戏结束处理方法
+        
+        gameStatus = .over
+        
+    }
+    
+    func moveScene() {
+        
+        
+    }
+    
     
     override func didMove(to view: SKView) {
         
@@ -63,6 +112,15 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        switch gameStatus {
+        case .idle, .preview:
+            startGame()
+        case .running:
+            break
+        case .over:
+            restart()
+        }
+        
         if let label = self.label {
             label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
         }
@@ -85,5 +143,10 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        if gameStatus != .over {
+            
+            moveScene()
+            
+        }
     }
 }

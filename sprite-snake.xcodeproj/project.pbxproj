@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6CAC6F33259EBB730048B3F9 /* BotSnake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F31259EBB720048B3F9 /* BotSnake.swift */; };
+		6CAC6F34259EBB730048B3F9 /* PlayerSnake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F32259EBB730048B3F9 /* PlayerSnake.swift */; };
+		6CAC6F38259EBB9B0048B3F9 /* Food.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F37259EBB9B0048B3F9 /* Food.swift */; };
+		6CAC6F3C259EC0750048B3F9 /* randomIntNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F3B259EC0750048B3F9 /* randomIntNumber.swift */; };
+		6CAC6F45259ED20F0048B3F9 /* randName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F44259ED20F0048B3F9 /* randName.swift */; };
 		EC4C641E259B3714008F3051 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4C641D259B3714008F3051 /* AppDelegate.swift */; };
 		EC4C6420259B3714008F3051 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = EC4C641F259B3714008F3051 /* GameScene.sks */; };
 		EC4C6422259B3714008F3051 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = EC4C6421259B3714008F3051 /* Actions.sks */; };
@@ -18,10 +23,15 @@
 		EC4C6436259B3BE0008F3051 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = EC4C6435259B3BE0008F3051 /* assets */; };
 		ECBA5EA8259DC29800973A05 /* MyScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = ECBA5EA7259DC29800973A05 /* MyScene.sks */; };
 		ECBA5EAC259DC3A500973A05 /* MenuScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = ECBA5EAB259DC3A500973A05 /* MenuScene.sks */; };
-		ECBA5EB0259DDCB400973A05 /* snake.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA5EAF259DDCB400973A05 /* snake.swift */; };
+		ECBA5EB0259DDCB400973A05 /* Snake.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBA5EAF259DDCB400973A05 /* Snake.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6CAC6F31259EBB720048B3F9 /* BotSnake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BotSnake.swift; sourceTree = "<group>"; };
+		6CAC6F32259EBB730048B3F9 /* PlayerSnake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerSnake.swift; sourceTree = "<group>"; };
+		6CAC6F37259EBB9B0048B3F9 /* Food.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Food.swift; sourceTree = "<group>"; };
+		6CAC6F3B259EC0750048B3F9 /* randomIntNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = randomIntNumber.swift; sourceTree = "<group>"; };
+		6CAC6F44259ED20F0048B3F9 /* randName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = randName.swift; sourceTree = "<group>"; };
 		EC4C641A259B3714008F3051 /* sprite-snake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "sprite-snake.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC4C641D259B3714008F3051 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EC4C641F259B3714008F3051 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -36,7 +46,7 @@
 		ECBA5EA7259DC29800973A05 /* MyScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyScene.sks; sourceTree = "<group>"; };
 		ECBA5EAB259DC3A500973A05 /* MenuScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MenuScene.sks; sourceTree = "<group>"; };
 		ECBA5EAD259DC4C300973A05 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		ECBA5EAF259DDCB400973A05 /* snake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = snake.swift; sourceTree = "<group>"; };
+		ECBA5EAF259DDCB400973A05 /* Snake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snake.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +60,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6CAC6F3A259EC05E0048B3F9 /* extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6CAC6F3B259EC0750048B3F9 /* randomIntNumber.swift */,
+				6CAC6F44259ED20F0048B3F9 /* randName.swift */,
+			);
+			path = extensions;
+			sourceTree = "<group>";
+		};
 		EC4C6411259B3714008F3051 = {
 			isa = PBXGroup;
 			children = (
@@ -71,6 +90,7 @@
 		EC4C641C259B3714008F3051 /* sprite-snake */ = {
 			isa = PBXGroup;
 			children = (
+				6CAC6F3A259EC05E0048B3F9 /* extensions */,
 				ECBA5EAE259DDC9900973A05 /* objects */,
 				ECBA5EAA259DC33A00973A05 /* scenes */,
 				ECBA5EA9259DC32D00973A05 /* actions */,
@@ -106,7 +126,10 @@
 		ECBA5EAE259DDC9900973A05 /* objects */ = {
 			isa = PBXGroup;
 			children = (
-				ECBA5EAF259DDCB400973A05 /* snake.swift */,
+				6CAC6F31259EBB720048B3F9 /* BotSnake.swift */,
+				6CAC6F32259EBB730048B3F9 /* PlayerSnake.swift */,
+				ECBA5EAF259DDCB400973A05 /* Snake.swift */,
+				6CAC6F37259EBB9B0048B3F9 /* Food.swift */,
 			);
 			path = objects;
 			sourceTree = "<group>";
@@ -187,10 +210,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECBA5EB0259DDCB400973A05 /* snake.swift in Sources */,
+				6CAC6F45259ED20F0048B3F9 /* randName.swift in Sources */,
+				6CAC6F38259EBB9B0048B3F9 /* Food.swift in Sources */,
+				ECBA5EB0259DDCB400973A05 /* Snake.swift in Sources */,
+				6CAC6F33259EBB730048B3F9 /* BotSnake.swift in Sources */,
 				EC4C6424259B3714008F3051 /* GameScene.swift in Sources */,
 				EC4C6426259B3714008F3051 /* GameViewController.swift in Sources */,
 				EC4C641E259B3714008F3051 /* AppDelegate.swift in Sources */,
+				6CAC6F3C259EC0750048B3F9 /* randomIntNumber.swift in Sources */,
+				6CAC6F34259EBB730048B3F9 /* PlayerSnake.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

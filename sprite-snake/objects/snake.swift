@@ -10,38 +10,40 @@ import Foundation
 import SpriteKit
 import GameplayKit
 
-var g_globalKey = 0
 
 class Snake {
-    static let slowSpeed = 150;
-    static let fastSpeed = 200;
-    static let rotateSpeed = 150;
-    static let initLength = 6;
-    static let distanceIndex = 17;
+    static var globalKey = 0
+    static let slowSpeed = 150
+    static let fastSpeed = 200
+    static let rotateSpeed = 150
+    static let initLength = 6
+    static let distanceIndex = 17
 
-    var scale = 0.5;
-    var speed = slowSpeed;
+    var scale = 0.5
+    var speed = slowSpeed
     
-    var globalKey:Int;
+    var globalKey:Int
     
-    var preferredDistance: Double;
-    var headPath: [(Double, Double)];
-    var queuedSections = 0.0;
-    var loss = 0.0;
+    var preferredDistance = 0.0
+    var headPath: [(Double, Double)] = []
+    var queuedSections = 0.0
+    var loss = 0.0
     
-    var sectionGroup: [SKSpriteNode];
-    var head: SKSpriteNode;
-    var lastHeadPosition: (Double, Double);
+    var sectionGroup: [SKSpriteNode] = []
+    var head: SKSpriteNode
+    var lastHeadPosition: (Double, Double)
+    
+    var spriteKey = "circle"
     
     init(x:Double, y:Double, name:String) {
-        self.globalKey = g_globalKey;
-        g_globalKey+=1;
+        self.globalKey = Snake.globalKey
+        Snake.globalKey+=1
         
-        self.setScale(0.5);
+        //self.setScale(0.5)
         
-        for (let i = 0; i <= self.initLength - 1; i++) {
-            self.addSectionAtPosition(x, y, self.spriteKey); // 60x60
-            self.headPath.push((x, y));
+        for _ in 0...Snake.initLength {
+            _ = self.addSectionAtPosition(x:x, y:y,secSpriteKey: self.spriteKey) // 60x60
+            self.headPath.append((x, y))
         }
     }
     
@@ -56,12 +58,17 @@ class Snake {
     /**
      *
      */
-    func destroy(){
+    deinit{
     
     }
 
-    func addSectionAtPosition(x:Int, y:Int, secSpriteKey:String = "circle") {
-        
+    func addSectionAtPosition(x:Double,y:Double,secSpriteKey:String = "circle") -> SKSpriteNode? {
+        if let sec = SKSpriteNode(fileNamed: secSpriteKey) {
+            sec.setScale(CGFloat(self.scale))
+            self.sectionGroup.append(sec)
+            return sec
+        }
+        return nil
     }
     
     func findNextPointIndex(currentIndex:Int) {
@@ -73,11 +80,11 @@ class Snake {
     }
     
     func setScale(_ scale: Double) {
-        self.scale = scale;
-        self.preferredDistance = Double(Snake.distanceIndex) * self.scale;
+        self.scale = scale
+        self.preferredDistance = Double(Snake.distanceIndex) * self.scale
     }
     
     func incrementSize(amount: Double) {
-        self.queuedSections += amount;
+        self.queuedSections += amount
     }
 }

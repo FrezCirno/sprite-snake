@@ -1,4 +1,10 @@
-
+//
+//  Food.swift
+//  sprite-snake
+//
+//  Created by tzx on 2020/12/31.
+//  Copyright © 2020 frezcirno. All rights reserved.
+//
 
 
 
@@ -6,12 +12,11 @@ import Foundation
 import SpriteKit
 import GameplayKit
 
-var g_globalKey = 0
 
 class PlayerSnake: Snake {
 
-    init(x:Double, y:Double, name:String) {
-        super(x,y,name)
+    override init(x:Double, y:Double, name:String) {
+        super.init(x: x,y: y,name: name)
 
     }
 
@@ -19,7 +24,7 @@ class PlayerSnake: Snake {
      * Add functionality to the original snake update method so that the player
      * can control where this snake goes
      */
-    update() {
+    override func update() {
         // const headX = this.head.x;
         // const headY = this.head.y;
         // const mousePosX = this.scene.input.activePointer.worldX || 0;
@@ -46,7 +51,7 @@ class PlayerSnake: Snake {
         super.update();
     }
 
-    destroy() {
+    deinit {
         // var start = this.scene.scene.get('start')
         // start.best = Math.max(start.best || 0, this.sectionGroup.getLength())
         // this.scene.sound.play('death')
@@ -56,7 +61,7 @@ class PlayerSnake: Snake {
         // if (closest) this.scene.cameras.main.startFollow(closest);
         // this.scene.input.off('pointerdown', this.pointerdown, this);
         // this.scene.input.off('pointerup', this.pointerup, this);
-        super.destroy();
+//        super.deinit()
 
         // this.scene.scene.sendToBack('battle').run('start');
     }

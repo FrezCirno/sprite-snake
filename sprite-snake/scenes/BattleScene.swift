@@ -9,24 +9,37 @@
 import SpriteKit
 import GameplayKit
 
-class BattleScene: SKScene {
-    
-    /**
-     * 开始时，玩家的蛇自行移动，相机跟随蛇头
-     *  如果玩家的蛇死亡，摄像头停止移动，一段时间后，生成新的玩家
-     * 玩家点击屏幕，游戏开始，玩家输入id，蛇由玩家自行控制
-     * 玩家的蛇死亡，游戏结束，屏幕变灰，显示玩家分数，同时镜头跟随杀死玩家的蛇
-     */
-    enum GameStatus {
-        case idle    //初始化
-        case preview  //演示界面
-        case running    //游戏运行中
-        case over    //游戏结束
-    }
-    
-    var gameStatus: GameStatus = .idle  //表示当前游戏状态的变量，初始值为初始化状态
-    
 
+enum GameSceneState {
+    case Idle    //初始化
+    case Preview  //演示界面
+    case Running    //游戏运行中
+    case Over    //游戏结束
+}
+
+
+class BattleScene: SKScene, SKPhysicsContactDelegate {
+    
+    /* Scene connections */
+    var score: SKLabelNode!
+    var scoreBoard: SKLabelNode!
+    
+    /* UI Connections */
+    var buttonRestart: MSButtonNode!
+    var scoreLabel: SKLabelNode!
+    
+    /* Timers */
+    var sinceTouch: CFTimeInterval = 0
+    var spawnTimer: CFTimeInterval = 0
+    
+    /* Game constants */
+    let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS */
+    let scrollSpeed: CGFloat = 160
+    
+    /* Game management */
+    var gameState: GameSceneState = .Running
+    
+    
     var worldsize = CGSize(width: 0, height: 0)
     
     var foodcount = 0
@@ -37,6 +50,16 @@ class BattleScene: SKScene {
     var snakes: [Snake] = []
     
     override func didMove(to view: SKView) {
+        /* Setup your scene here */
+        
+        /* Set physics contact delegate */
+        physicsWorld.contactDelegate = self
+        
+        /* "//x" -> Recursive node search for 'x' (child of referenced node) */
+        score = self.childNode(withName: "ScoreNode") as? SKLabelNode
+        scoreBoard = self.childNode(withName: "ScoreBoardNode") as? SKLabelNode
+        
+            
         
 //        // Get label node from scene and store it for use later
 //        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode

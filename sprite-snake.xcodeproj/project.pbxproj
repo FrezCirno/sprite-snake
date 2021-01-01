@@ -13,6 +13,7 @@
 		6CAC6F45259ED20F0048B3F9 /* randName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F44259ED20F0048B3F9 /* randName.swift */; };
 		6CAC6F4B259EEB400048B3F9 /* MyTileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6CAC6F4A259EEB3F0048B3F9 /* MyTileSet.sks */; };
 		6CAC6F50259EF5040048B3F9 /* MenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F4F259EF5040048B3F9 /* MenuScene.swift */; };
+		6CAC6F56259EF8DB0048B3F9 /* BattleScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6CAC6F55259EF8DB0048B3F9 /* BattleScene.sks */; };
 		EC4C641E259B3714008F3051 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4C641D259B3714008F3051 /* AppDelegate.swift */; };
 		EC4C6422259B3714008F3051 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = EC4C6421259B3714008F3051 /* Actions.sks */; };
 		EC4C6424259B3714008F3051 /* BattleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4C6423259B3714008F3051 /* BattleScene.swift */; };
@@ -32,6 +33,7 @@
 		6CAC6F44259ED20F0048B3F9 /* randName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = randName.swift; sourceTree = "<group>"; };
 		6CAC6F4A259EEB3F0048B3F9 /* MyTileSet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyTileSet.sks; sourceTree = "<group>"; };
 		6CAC6F4F259EF5040048B3F9 /* MenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScene.swift; sourceTree = "<group>"; };
+		6CAC6F55259EF8DB0048B3F9 /* BattleScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BattleScene.sks; sourceTree = "<group>"; };
 		EC4C641A259B3714008F3051 /* sprite-snake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "sprite-snake.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC4C641D259B3714008F3051 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EC4C6421259B3714008F3051 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				EC4C6423259B3714008F3051 /* BattleScene.swift */,
 				ECBA5EAB259DC3A500973A05 /* MenuScene.sks */,
 				6CAC6F4F259EF5040048B3F9 /* MenuScene.swift */,
+				6CAC6F55259EF8DB0048B3F9 /* BattleScene.sks */,
 			);
 			path = scenes;
 			sourceTree = "<group>";
@@ -189,6 +192,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6CAC6F56259EF8DB0048B3F9 /* BattleScene.sks in Resources */,
 				EC4C6429259B3714008F3051 /* Main.storyboard in Resources */,
 				EC4C642B259B3715008F3051 /* Assets.xcassets in Resources */,
 				EC4C6436259B3BE0008F3051 /* assets in Resources */,

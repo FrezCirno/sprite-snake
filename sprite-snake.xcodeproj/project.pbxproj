@@ -10,7 +10,6 @@
 		6CAC6F33259EBB730048B3F9 /* BotSnake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F31259EBB720048B3F9 /* BotSnake.swift */; };
 		6CAC6F34259EBB730048B3F9 /* PlayerSnake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F32259EBB730048B3F9 /* PlayerSnake.swift */; };
 		6CAC6F38259EBB9B0048B3F9 /* Food.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F37259EBB9B0048B3F9 /* Food.swift */; };
-		6CAC6F3C259EC0750048B3F9 /* randomIntNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F3B259EC0750048B3F9 /* randomIntNumber.swift */; };
 		6CAC6F45259ED20F0048B3F9 /* randName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F44259ED20F0048B3F9 /* randName.swift */; };
 		EC4C641E259B3714008F3051 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4C641D259B3714008F3051 /* AppDelegate.swift */; };
 		EC4C6420259B3714008F3051 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = EC4C641F259B3714008F3051 /* GameScene.sks */; };
@@ -30,7 +29,6 @@
 		6CAC6F31259EBB720048B3F9 /* BotSnake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BotSnake.swift; sourceTree = "<group>"; };
 		6CAC6F32259EBB730048B3F9 /* PlayerSnake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerSnake.swift; sourceTree = "<group>"; };
 		6CAC6F37259EBB9B0048B3F9 /* Food.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Food.swift; sourceTree = "<group>"; };
-		6CAC6F3B259EC0750048B3F9 /* randomIntNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = randomIntNumber.swift; sourceTree = "<group>"; };
 		6CAC6F44259ED20F0048B3F9 /* randName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = randName.swift; sourceTree = "<group>"; };
 		EC4C641A259B3714008F3051 /* sprite-snake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "sprite-snake.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC4C641D259B3714008F3051 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -63,7 +61,6 @@
 		6CAC6F3A259EC05E0048B3F9 /* extensions */ = {
 			isa = PBXGroup;
 			children = (
-				6CAC6F3B259EC0750048B3F9 /* randomIntNumber.swift */,
 				6CAC6F44259ED20F0048B3F9 /* randName.swift */,
 			);
 			path = extensions;
@@ -217,7 +214,6 @@
 				EC4C6424259B3714008F3051 /* GameScene.swift in Sources */,
 				EC4C6426259B3714008F3051 /* GameViewController.swift in Sources */,
 				EC4C641E259B3714008F3051 /* AppDelegate.swift in Sources */,
-				6CAC6F3C259EC0750048B3F9 /* randomIntNumber.swift in Sources */,
 				6CAC6F34259EBB730048B3F9 /* PlayerSnake.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -228,7 +228,7 @@ class GameScene: SKScene {
         }
 //        s.head.setCollideWorldBounds(true)
 //        s.head.body.onWorldBounds = true
-
+        addChild(snake.sections)
         return snake
     }
 
@@ -269,6 +269,7 @@ class GameScene: SKScene {
             
             //food.body.setCircle(food.width * 0.5)
             self.foods.append(food)
+            addChild(food)
             return food
         }
         return nil

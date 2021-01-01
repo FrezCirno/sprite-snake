@@ -19,6 +19,7 @@
 2. **蛇头**与**地图边界**
 
     1. Snake内部要存储head
+    2. head需要
 
 3. **蛇头**与所有**食物**节点
 
@@ -32,7 +33,9 @@
     * ...
 
 * Snake
+    * sections: SKNode 内含蛇身所有节点，包括head，用于渲染
     * head: SKSpriteNode 蛇头节点
+    * label: SKLabelNode 名字的标签，始终位于蛇头上方
     * enemies 其他所有蛇的节
     * 
     * update() 计算loss
@@ -49,6 +52,25 @@
     * createFood() 创建一个食物
     * (override) update() 更新界面，检查是否需要创建新的食物/蛇
         * 
+
+## 层次结构
+
+- SKScene
+    - SKTileMapNode 背景
+    - SKNode 食物
+        - SKSpriteNode 一个食物
+        - SKSpriteNode 一个食物
+        - SKSpriteNode 一个食物
+        - .......
+    - SKNode 蛇1
+        - SKSpriteNode 碰撞探测器
+        - SKSpriteNode 蛇头
+        - SKSpriteNode 蛇身1
+        - SKSpriteNode 蛇身2
+        - SKSpriteNode 蛇身3
+        - ......
+    - SKNode 蛇2
+    - SKNode 蛇3
 
 
 ## 蛇身设计

@@ -24,7 +24,6 @@ public extension String {
                      "Joshua", "Stewart", "Samantha", "Forsyth",
                      "Brandon", "Simpson", "Alan", "Burgess",
                      "Piers", "Graham"]
-        let rnd = Int.randomIntNumber(upper: names.count)
-        return names[rnd]
+        return names[Int.random(in: 0...names.count)]
     }
 }

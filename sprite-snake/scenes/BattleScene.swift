@@ -9,7 +9,7 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class BattleScene: SKScene {
     
     /**
      * 开始时，玩家的蛇自行移动，相机跟随蛇头
@@ -27,21 +27,17 @@ class GameScene: SKScene {
     var gameStatus: GameStatus = .idle  //表示当前游戏状态的变量，初始值为初始化状态
     
 
-    var worldsize = (0,0)
+    var worldsize = CGSize(width: 0, height: 0)
+    
     var foodcount = 0
+    var foodNode = SKNode()
+    var foods: [Food] = []
+    
     var botcount = 0
     var snakes: [Snake] = []
-    var foods: [Food] = []
-
-    /**
-     * 如何表示一条蛇：
-     *  head
-     */
-    
-    private var snakeNode : SKSpriteNode?
     
     override func didMove(to view: SKView) {
-//
+        
 //        // Get label node from scene and store it for use later
 //        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
 //        if let label = self.label {
@@ -61,43 +57,11 @@ class GameScene: SKScene {
 //                                              SKAction.fadeOut(withDuration: 0.5),
 //                                              SKAction.removeFromParent()]))
 //        }
-    }
-    
-    
-    func touchDown(atPoint pos : CGPoint) {
-//        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-//            n.position = pos
-//            n.strokeColor = SKColor.green
-//            self.addChild(n)
-//        }
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-//        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-//            n.position = pos
-//            n.strokeColor = SKColor.blue
-//            self.addChild(n)
-//        }
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-//        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-//            n.position = pos
-//            n.strokeColor = SKColor.red
-//            self.addChild(n)
-//        }
+        
+        self.create()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        switch gameStatus {
-//        case .idle, .preview:
-//            startGame()
-//        case .running:
-//            break
-//        case .over:
-//            restart()
-//        }
-//
 //        if let label = self.label {
 //            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
 //        }
@@ -117,60 +81,51 @@ class GameScene: SKScene {
 //        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
     }
     
-    
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-        if gameStatus != .over {
-            
-            moveScene()
-            
+        //update game components
+        for snake in self.snakes {
+            snake.update()
         }
-    }
-
-
-    
-    func restart()  {
-        
-        //游戏初始化处理方法
-        
-        gameStatus = .idle
-        
-    }
-    func startGame()  {
-        
-        //游戏开始处理方法
-        
-        gameStatus = .running
-        
-    }
-    func gameOver()  {
-        
-        //游戏结束处理方法
-        
-        gameStatus = .over
-        
-    }
-    
-    func moveScene() {
-        
-        
+        if (self.snakes.count < self.botcount) {
+            _ = self.createSnake(type: "bot", name: String.randName())
+        }
+        if (self.foods.count < self.foodcount) {
+            _ = self.createFood(x: Double.random(in: 0.0..<Double(self.worldsize.width)),
+                                y: Double.random(in: 0.0..<Double(self.worldsize.height)),
+                                amount: 1)
+        }
     }
 
     func create() {
-        if (false) {
-            self.worldsize = (1000, 1000)
-            self.foodcount = 100
-            self.botcount = 10
+        if (true) {
+            self.worldsize = CGSize(width: 700, height: 1000)
+            self.foodcount = 0
+            self.botcount = 0
         } else {
-            self.worldsize = (5000, 5000)
+            self.worldsize = CGSize(width: 5000, height: 5000)
             self.foodcount = 500
             self.botcount = 20
         }
-
-        // 填充背景
-        let bg = SKTileMapNode(fileNamed: "background")
         
-//        self.add.tileSprite(0, 0, self.worldsize[0], self.worldsize[1], "background")
+        // 填充背景
+        let map = SKNode()
+        
+        let tileSet = SKTileSet(named: "My Grid Tile Set")!
+        let tileTiles = tileSet.tileGroups.first { $0.name == "Tile" }
+        let sandTiles = tileSet.tileGroups.first { $0.name == "Sand" }
+        
+        let tileSize = CGSize(width: 40, height: 40)
+        let columns = Int(self.worldsize.width / tileSize.width)
+        let rows = Int(self.worldsize.height / tileSize.height)
+        
+        let bottonLayer = SKTileMapNode(tileSet: tileSet, columns: columns, rows: rows, tileSize: tileSize)
+        bottonLayer.fill(with: tileTiles)
+        map.addChild(bottonLayer)
+        map.position = CGPoint(x: 0, y: 0)
+        
+        addChild(map)
+        
+        
 //        self.physics.world.setBounds(-self.worldsize[0] / 2, -self.worldsize[1] / 2, self.worldsize[0], self.worldsize[1])
 
 //        self.physics.world.on("worldbounds", function (body) {
@@ -178,13 +133,15 @@ class GameScene: SKScene {
 //        })
 
         // 随机创建食物
-        for _ in 0...self.foodcount {
-            _ = self.createFood(x: Double.random(in: 0.0...Double(self.worldsize.0)),
-                                y: Double.random(in: 0.0...Double(self.worldsize.1)))
+        addChild(self.foodNode)
+        
+        for _ in 0..<self.foodcount {
+            _ = self.createFood(x: Double.random(in: 0.0..<Double(self.worldsize.width)),
+                                y: Double.random(in: 0.0..<Double(self.worldsize.height)))
         }
-
+        
         //create bots
-        for _ in 0...self.botcount {
+        for _ in 0..<self.botcount {
             _ = self.createSnake(type: "bot", name: String.randName())
         }
 
@@ -212,8 +169,8 @@ class GameScene: SKScene {
         var x = 0.0, y = 0.0
         var snake: Snake
         while (true) {
-            x = Double.random(in: 0.0...Double(self.worldsize.0))
-            y = Double.random(in: 0.0...Double(self.worldsize.1))
+            x = Double.random(in: 0.0..<Double(self.worldsize.width))
+            y = Double.random(in: 0.0..<Double(self.worldsize.height))
 //            var closest = self.physics.closest({ x, y }, self.snakes.reduce((res, snake) => res.concat(snake.sectionGroup.getChildren()), []))
 //            if (!closest) {break}
 //            var dis = distance_squared((closest.x, closest.y), (x,y))
@@ -229,27 +186,8 @@ class GameScene: SKScene {
 //        s.head.setCollideWorldBounds(true)
 //        s.head.body.onWorldBounds = true
         addChild(snake.sections)
+        snakes.append(snake)
         return snake
-    }
-
-    
-
-    /**
-     * Main update loop
-     */
-    func update() {
-        //update game components
-        for snake in self.snakes {
-            snake.update()
-        }
-        if (self.snakes.count < self.botcount) {
-            _ = self.createSnake(type: "bot", name: String.randName())
-        }
-        if (self.foods.count < self.foodcount) {
-            _ = self.createFood(x: Double.random(in: 0.0...Double(self.worldsize.0)),
-                                y: Double.random(in: 0.0...Double(self.worldsize.1)),
-                                amount: 1)
-        }
     }
 
     /**
@@ -258,21 +196,46 @@ class GameScene: SKScene {
      * @param  {number} y y-coordinate
      * @return {Food}   food object created
      */
-    func createFood(x: Double, y: Double, amount: Double = Double.random(in: 0.5...1), key: String = "food") -> Food? {
+    func createFood(x: Double, y: Double, amount: Double = Double.random(in: 0.5..<1), key: String = "food") -> Food? {
         if let food = Food(fileNamed: key) {
             food.name = "food"
             
 //            food.tint = Int.randomIntNumber(upper: 0xffffff)
-            food.alpha = CGFloat(Double.random(in: 0.5...1))
+            food.alpha = CGFloat(Double.random(in: 0.5..<1))
             food.userData?["amount"] = amount
             food.setScale(CGFloat(0.3 + amount))
             
             //food.body.setCircle(food.width * 0.5)
             self.foods.append(food)
-            addChild(food)
             return food
         }
         return nil
     }
 
+    
+    
+    func touchDown(atPoint pos : CGPoint) {
+//        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
+//            n.position = pos
+//            n.strokeColor = SKColor.green
+//            self.addChild(n)
+//        }
+    }
+    
+    func touchMoved(toPoint pos : CGPoint) {
+//        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
+//            n.position = pos
+//            n.strokeColor = SKColor.blue
+//            self.addChild(n)
+//        }
+    }
+    
+    func touchUp(atPoint pos : CGPoint) {
+//        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
+//            n.position = pos
+//            n.strokeColor = SKColor.red
+//            self.addChild(n)
+//        }
+    }
+    
 }

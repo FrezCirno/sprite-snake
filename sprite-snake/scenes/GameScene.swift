@@ -26,6 +26,16 @@ class GameScene: SKScene {
     
     var gameStatus: GameStatus = .idle  //表示当前游戏状态的变量，初始值为初始化状态
     
+
+    var worldsize = (0,0)
+    var foodcount = 0
+    var botcount = 0
+
+
+
+
+
+
     /**
      * 如何表示一条蛇：
      *  head
@@ -149,4 +159,129 @@ class GameScene: SKScene {
             
         }
     }
+
+
+
+    func create() {
+        if (0) {
+            self.worldsize = { x: 1000, y: 1000 };
+            self.foodcount = 100;
+            self.botcount = 10;
+        } else {
+            self.worldsize = { x: 5000, y: 5000 };
+            self.foodcount = 500;
+            self.botcount = 20;
+        }
+
+        // 填充背景 
+        self.add.tileSprite(0, 0, self.worldsize.x, self.worldsize.y, 'background');
+        self.physics.world.setBounds(-self.worldsize.x / 2, -self.worldsize.y / 2, self.worldsize.x, self.worldsize.y);
+
+        self.physics.world.on('worldbounds', function (body) {
+            body.gameObject._snake.destroy();
+        });
+
+        // 初始化物体组
+        self.snakes = [];
+
+        // 随机创建食物
+        self.foodGroup = self.physics.add.group();
+        for (let i = 0; i < self.foodcount; i++) {
+            self.createFood(self.rand(self.worldsize.x), self.rand(self.worldsize.y),);
+        }
+
+        //create bots
+        for (let i = 0; i < self.botcount; i++) {
+            self.createSnake(BotSnake, self.randName());
+        }
+
+        // 跟随某个bot
+        self.cameras.main.startFollow(self.snakes[0].head)
+            .setBounds(-self.worldsize.x / 2, -self.worldsize.y / 2, self.worldsize.x, self.worldsize.y)
+
+        // 重新进入此scene时(说明gameover), 创建玩家
+        self.events.on('resume', () => {
+            var player = self.createSnake(PlayerSnake, prompt("Please enter your name", "player"))
+            self.cameras.main
+                .startFollow(player.head)
+                .setLerp(1, 1)
+        }, self)
+
+        self.events.on('resize', () => {
+            self.game.config.width = window.innerWidth;
+            self.game.config.height = window.innerHeight;
+        })
+    }
+    /**
+     * new snake
+     */
+    createSnake(bot, name) {
+        var x, y;
+        while (1) {
+            x = self.rand(self.worldsize.x - 100)
+            y = self.rand(self.worldsize.y - 100)
+            var closest = self.physics.closest({ x, y }, self.snakes.reduce((res, snake) => res.concat(snake.sectionGroup.getChildren()), []))
+            if (!closest) break;
+            var dis = Phaser.Math.Distance.BetweenPoints(closest, { x, y })
+            if (dis > 100) break;
+        }
+        let s = new bot(self, x, y, name)
+
+        s.head.setCollideWorldBounds(true);
+        s.head.body.onWorldBounds = true;
+
+        return s;
+    }
+
+    randName() {
+        const names = ['Apple', 'Banana', 'Cat', 'Trump',
+            'Me', 'Sun', 'Snack', 'Snnke',
+            'Star', 'Gabrielle', 'Wright',
+            'Owen', 'Ferguson', 'Maria', 'Knox',
+            'Sally', 'Randall', 'Kevin', 'Walker',
+            'Brandon', 'Morgan', 'Kimberly', 'Clark',
+            'Faith', 'Lee', 'Adrian', 'May',
+            'Adrian', 'Morgan', 'Connor', 'McGrath',
+            'Dylan', 'Bell', 'Jasmine', 'Cameron',
+            'Emma', 'Rees', 'Caroline', 'Walsh',
+            'Joshua', 'Stewart', 'Samantha', 'Forsyth',
+            'Brandon', 'Simpson', 'Alan', 'Burgess',
+            'Piers', 'Graham']
+        return names[Phaser.Math.RND.integerInRange(0, names.length - 1)];
+    }
+    /**
+     * Main update loop
+     */
+    update() {
+        //update game components
+        for (let index = 0; index < self.snakes.length; index++) {
+            const snake = self.snakes[index];
+            snake.update();
+        }
+        if (self.snakes.length < self.botcount) {
+            self.createSnake(BotSnake, self.randName());
+        }
+        if (self.foodGroup.getLength() < self.foodcount) {
+            self.createFood(self.rand(self.worldsize.x), self.rand(self.worldsize.y));
+        }
+    }
+
+    /**
+     * Create a piece of food at a point
+     * @param  {number} x x-coordinate
+     * @param  {number} y y-coordinate
+     * @return {Food}   food object created
+     */
+    createFood(x, y, amount, key = 'food') {
+        const food = self.physics.add.sprite(x, y, key);
+        food.name = 'food';
+        food.tint = Phaser.Math.RND.integerInRange(0, 0xffffff);
+        food.alpha = Phaser.Math.RND.realInRange(0.5, 1)
+        food.amount = amount || (Math.random() / 2 + 0.5);
+        food.setScale(0.3 + food.amount);
+        food.body.setCircle(food.width * 0.5);
+        self.foodGroup.add(food);
+        return food;
+    }
+
 }

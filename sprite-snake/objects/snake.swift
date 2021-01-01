@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import SpriteKit
+import GameplayKit
 
 var g_globalKey = 0
 
@@ -23,18 +25,24 @@ class Snake {
     var globalKey:Int;
     
     var preferredDistance: Double;
-    var headPath: [Int];
+    var headPath: [(Double, Double)];
     var queuedSections = 0.0;
     var loss = 0.0;
     
-    var sectionGroup: [rb_node];
+    var sectionGroup: [SKSpriteNode];
+    var head: SKSpriteNode;
+    var lastHeadPosition: (Double, Double);
     
-    init(x:Float, y:Float, name:String) {
+    init(x:Double, y:Double, name:String) {
         self.globalKey = g_globalKey;
         g_globalKey+=1;
         
         self.setScale(0.5);
         
+        for (let i = 0; i <= self.initLength - 1; i++) {
+            self.addSectionAtPosition(x, y, self.spriteKey); // 60x60
+            self.headPath.push((x, y));
+        }
     }
     
     /**

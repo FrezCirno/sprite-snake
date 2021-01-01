@@ -15,9 +15,8 @@ import GameplayKit
 
 class PlayerSnake: Snake {
 
-    override init(x:Double, y:Double, name:String) {
-        super.init(x: x,y: y,name: name)
-
+    override init(scene: SKScene, pos: CGPoint, name:String) {
+        super.init(scene: scene, pos: pos, name: name)
     }
 
     /**

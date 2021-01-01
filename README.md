@@ -33,10 +33,11 @@
     * ...
 
 * Snake
-    * sections: SKNode 内含蛇身所有节点，包括head，用于渲染
+    * root: SKNode 内含sections，detector，label等，用于渲染
+    * sections: SKNode 包含蛇身所有节点，包括head
     * head: SKSpriteNode 蛇头节点
     * label: SKLabelNode 名字的标签，始终位于蛇头上方
-    * enemies 其他所有蛇的节
+    * enemies 其他所有蛇的节，就是碰到会死的节点
     * 
     * update() 计算loss
     * 
@@ -44,7 +45,7 @@
 * GameScene: SKScene
     * (internal) scene 界面类
     * snakes: [Snake]
-    * foods: [Food]
+    * foodNode: SKNode 所有食物的容器
     * createSnake() 创建一条蛇
         * 将蛇对象加入snakes中，将蛇的所有节点（body节点）加到scene中
         * 更新所有蛇的enemies，和新创建的蛇的enemies
@@ -52,6 +53,14 @@
     * createFood() 创建一个食物
     * (override) update() 更新界面，检查是否需要创建新的食物/蛇
         * 
+
+## 物理引擎使用
+
+* 线速度：velocity
+
+* 角度：zRotation
+
+* 角速度：angularVelocity
 
 ## 逻辑
 
@@ -63,19 +72,33 @@
 ## 层次结构
 
 - SKScene
-    - SKTileMapNode 背景
-    - SKNode 食物
+    - SKNode 背景组
+        - SKTileMapNode
+        - SKTileMapNode
+        - SKTileMapNode
+        - ......
+    - SKCameraNode 摄像头节点
+    - SKNode 食物组
         - SKSpriteNode 一个食物
         - SKSpriteNode 一个食物
         - SKSpriteNode 一个食物
         - .......
-    - SKNode 蛇1
+    - SKNode 蛇0（玩家）
+        - SKLabelNode 名字标签
         - SKSpriteNode 碰撞探测器
-        - SKSpriteNode 蛇头
-        - SKSpriteNode 蛇身1
-        - SKSpriteNode 蛇身2
-        - SKSpriteNode 蛇身3
-        - ......
+        - SKNode 蛇身
+            - SKSpriteNode 蛇头
+            - SKSpriteNode 蛇身1
+            - SKSpriteNode 蛇身2
+            - ......
+    - SKNode 蛇1
+        - SKLabelNode 名字标签
+        - SKSpriteNode 碰撞探测器
+        - SKNode 蛇身
+            - SKSpriteNode 蛇头
+            - SKSpriteNode 蛇身1
+            - SKSpriteNode 蛇身2
+            - ......
     - SKNode 蛇2
     - SKNode 蛇3
 

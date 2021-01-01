@@ -25,64 +25,138 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     var scoreBoard: SKLabelNode!
     
     /* UI Connections */
-    var buttonRestart: MSButtonNode!
-    var scoreLabel: SKLabelNode!
+//    var buttonRestart: MSButtonNode!
+//    var scoreLabel: SKLabelNode!
     
     /* Timers */
-    var sinceTouch: CFTimeInterval = 0
-    var spawnTimer: CFTimeInterval = 0
+//    var sinceTouch: CFTimeInterval = 0
+//    var spawnTimer: CFTimeInterval = 0
     
     /* Game constants */
-    let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS */
-    let scrollSpeed: CGFloat = 160
+//    let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS */
+//    let scrollSpeed: CGFloat = 160
     
     /* Game management */
     var gameState: GameSceneState = .Running
     
     
-    var worldsize = CGSize(width: 0, height: 0)
+    var worldSize = CGSize(width: 0, height: 0)
     
-    var foodcount = 0
+    var foodCount = 0
     var foodNode = SKNode()
-    var foods: [Food] = []
+//    var foods: [Food] = []
     
-    var botcount = 0
+    var botCount = 0
     var snakes: [Snake] = []
+    
+    let cam = SKCameraNode()
+    var followedSnake: Snake?
+    
+    var foodQuadTree: GKQuadtree<SKNode>! = nil
+    
+    let deviceWidth = UIScreen.main.bounds.width
+    let deviceHeight = UIScreen.main.bounds.height
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
         
         /* Set physics contact delegate */
-        physicsWorld.contactDelegate = self
+        self.physicsWorld.contactDelegate = self
+        self.physicsWorld.gravity = CGVector.zero
         
+        // Get label node from scene and store it for use later
         /* "//x" -> Recursive node search for 'x' (child of referenced node) */
-        score = self.childNode(withName: "ScoreNode") as? SKLabelNode
-        scoreBoard = self.childNode(withName: "ScoreBoardNode") as? SKLabelNode
-        
-            
-        
-//        // Get label node from scene and store it for use later
-//        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-//        if let label = self.label {
-//            label.alpha = 0.0
-//            label.run(SKAction.fadeIn(withDuration: 2.0))
-//        }
-//
-//        // Create shape node to use during mouse interaction
-//        let w = (self.size.width + self.size.height) * 0.05
-//        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
-//
-//        if let spinnyNode = self.spinnyNode {
-//            spinnyNode.liidth = 2.5
-//
-//            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-//            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-//                                              SKAction.fadeOut(withDuration: 0.5),
-//                                              SKAction.removeFromParent()]))
-//        }
+        self.score = (self.childNode(withName: "ScoreNode") as! SKLabelNode)
+        self.scoreBoard = (self.childNode(withName: "ScoreBoardNode") as! SKLabelNode)
+
+        /* Set up camera */
+        self.camera = cam
         
         self.create()
     }
+    
+    func create() {
+        if (true) {
+            self.worldSize = CGSize(width: 500, height: 500)
+            self.foodCount = 100
+            self.botCount = 1
+        } else {
+            self.worldSize = CGSize(width: 5000, height: 5000)
+            self.foodCount = 500
+            self.botCount = 20
+        }
+        
+        // Label
+        self.score.horizontalAlignmentMode = .left
+        self.score.verticalAlignmentMode = .top
+        self.score.fontName = "Halogen"
+        
+        self.scoreBoard.horizontalAlignmentMode = .right
+        self.scoreBoard.verticalAlignmentMode = .top
+        self.scoreBoard.fontName = "Halogen"
+        
+        // 填充背景
+        let map = SKNode()
+        
+        let tileSet = SKTileSet(named: "My Grid Tile Set")!
+        let tileTiles = tileSet.tileGroups.first { $0.name == "Tile" }
+        
+        let tileSize = CGSize(width: 40, height: 40)
+        let columns = Int(self.worldSize.width / tileSize.width)
+        let rows = Int(self.worldSize.height / tileSize.height)
+        
+        let bottonLayer = SKTileMapNode(tileSet: tileSet, columns: columns, rows: rows, tileSize: tileSize)
+        bottonLayer.fill(with: tileTiles)
+        map.addChild(bottonLayer)
+        map.position = CGPoint(x: 0, y: 0)
+        
+        addChild(map)
+        
+        
+//        self.physics.world.setBounds(-self.worldsize[0] / 2, -self.worldsize[1] / 2, self.worldsize[0], self.worldsize[1])
+
+//        self.physics.world.on("worldbounds", function (body) {
+//            body.gameObject._snake.destroy()
+//        })
+        
+        // foodQuadTree
+        let bounding = GKQuad(quadMin: vector2(
+                                Float(-self.worldSize.width/2), Float(-self.worldSize.height/2)),
+                              quadMax: vector2(
+                                Float(self.worldSize.width/2), Float(self.worldSize.height/2)))
+        self.foodQuadTree = GKQuadtree<SKNode>(boundingQuad: bounding, minimumCellSize: 10.0)
+
+        // 随机创建食物
+        for _ in 0..<self.foodCount {
+            _ = self.createFood(x: Double.random(in: 0.0..<Double(self.worldSize.width)),
+                                y: Double.random(in: 0.0..<Double(self.worldSize.height)))
+        }
+        addChild(self.foodNode)
+        
+        // 随机创建蛇
+        for _ in 0..<self.botCount {
+            _ = self.createSnake(type: "bot", name: String.randName())
+        }
+
+        // 跟随某个bot
+        self.followedSnake = self.snakes[0]
+//        self.cameras.main.startFollow(self.snakes[0].head)
+//            .setBounds(-self.worldsize[0] / 2, -self.worldsize[1] / 2, self.worldsize[0], self.worldsize[1])
+
+        // 重新进入此scene时(说明gameover), 创建玩家
+//        self.events.on("resume", () => {
+//            var player = self.createSnake(PlayerSnake, prompt("Please enter your name", "player"))
+//            self.cameras.main
+//                .startFollow(player.head)
+//                .setLerp(1, 1)
+//        }, self)
+//
+//        self.events.on("resize", () => {
+//            self.game.config.width = window.innerWidth
+//            self.game.config.height = window.innerHeight
+//        })
+    }
+    
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        if let label = self.label {
@@ -105,111 +179,102 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
-        //update game components
+        // update camera
+        if let position = self.followedSnake?.head?.position {
+            self.cam.position = position
+            
+            // update label
+            self.score.position = CGPoint(x: position.x-deviceWidth/2+50,
+                                          y: position.y+deviceHeight/2-50)
+            self.scoreBoard.position = CGPoint(x: position.x+deviceWidth/2-50,
+                                               y: position.y+deviceHeight/2-50)
+            self.score.text = "Your Length: 0"
+            self.scoreBoard.text = "Your Length: 0"
+        }
+        
+        // update every snake
         for snake in self.snakes {
             snake.update()
         }
-        if (self.snakes.count < self.botcount) {
+        
+        // try create a snake
+        if (self.snakes.count < self.botCount) {
             _ = self.createSnake(type: "bot", name: String.randName())
         }
-        if (self.foods.count < self.foodcount) {
-            _ = self.createFood(x: Double.random(in: 0.0..<Double(self.worldsize.width)),
-                                y: Double.random(in: 0.0..<Double(self.worldsize.height)),
+        
+        // try create a food
+        if (self.foodNode.children.count < self.foodCount) {
+            _ = self.createFood(x: Double.random(in: 0.0..<Double(self.worldSize.width)),
+                                y: Double.random(in: 0.0..<Double(self.worldSize.height)),
                                 amount: 1)
         }
     }
 
-    func create() {
-        if (true) {
-            self.worldsize = CGSize(width: 700, height: 1000)
-            self.foodcount = 0
-            self.botcount = 0
-        } else {
-            self.worldsize = CGSize(width: 5000, height: 5000)
-            self.foodcount = 500
-            self.botcount = 20
-        }
-        
-        // 填充背景
-        let map = SKNode()
-        
-        let tileSet = SKTileSet(named: "My Grid Tile Set")!
-        let tileTiles = tileSet.tileGroups.first { $0.name == "Tile" }
-        let sandTiles = tileSet.tileGroups.first { $0.name == "Sand" }
-        
-        let tileSize = CGSize(width: 40, height: 40)
-        let columns = Int(self.worldsize.width / tileSize.width)
-        let rows = Int(self.worldsize.height / tileSize.height)
-        
-        let bottonLayer = SKTileMapNode(tileSet: tileSet, columns: columns, rows: rows, tileSize: tileSize)
-        bottonLayer.fill(with: tileTiles)
-        map.addChild(bottonLayer)
-        map.position = CGPoint(x: 0, y: 0)
-        
-        addChild(map)
-        
-        
-//        self.physics.world.setBounds(-self.worldsize[0] / 2, -self.worldsize[1] / 2, self.worldsize[0], self.worldsize[1])
-
-//        self.physics.world.on("worldbounds", function (body) {
-//            body.gameObject._snake.destroy()
-//        })
-
-        // 随机创建食物
-        addChild(self.foodNode)
-        
-        for _ in 0..<self.foodcount {
-            _ = self.createFood(x: Double.random(in: 0.0..<Double(self.worldsize.width)),
-                                y: Double.random(in: 0.0..<Double(self.worldsize.height)))
-        }
-        
-        //create bots
-        for _ in 0..<self.botcount {
-            _ = self.createSnake(type: "bot", name: String.randName())
-        }
-
-        // 跟随某个bot
-//        self.cameras.main.startFollow(self.snakes[0].head)
-//            .setBounds(-self.worldsize[0] / 2, -self.worldsize[1] / 2, self.worldsize[0], self.worldsize[1])
-
-        // 重新进入此scene时(说明gameover), 创建玩家
-//        self.events.on("resume", () => {
-//            var player = self.createSnake(PlayerSnake, prompt("Please enter your name", "player"))
-//            self.cameras.main
-//                .startFollow(player.head)
-//                .setLerp(1, 1)
-//        }, self)
-//
-//        self.events.on("resize", () => {
-//            self.game.config.width = window.innerWidth
-//            self.game.config.height = window.innerHeight
-//        })
+    
+    func CGPointDistanceSquared(from: CGPoint, to: CGPoint) -> CGFloat {
+        return (from.x - to.x) * (from.x - to.x) + (from.y - to.y) * (from.y - to.y)
     }
+    
+    
+    func randomPoint() -> CGPoint {
+        let xrange = (-self.worldSize.width/2)...(self.worldSize.width/2)
+        let yrange = (-self.worldSize.height/2)...(self.worldSize.height/2)
+        return CGPoint(x: CGFloat.random(in: xrange), y: CGFloat.random(in: yrange))
+    }
+    
+    func randomPointForSnake() -> CGPoint? {
+        let bounding = GKQuad(quadMin: vector2(
+                                Float(-self.worldSize.width/2), Float(-self.worldSize.height/2)),
+                              quadMax: vector2(
+                                Float(self.worldSize.width/2), Float(self.worldSize.height/2)))
+        let quadTree = GKQuadtree<SKNode>(boundingQuad: bounding, minimumCellSize: 10)
+        for snake in snakes {
+            for sec in snake.root.children {
+                quadTree.add(sec, at: vector2(Float(sec.position.x), Float(sec.position.y)))
+            }
+        }
+        
+        var try_time = 0
+        while try_time < 10 {
+            let pos = randomPoint()
+            let lb = vector2(Float(pos.x), Float(pos.y))
+            let rt = vector2(Float(pos.x), Float(pos.y))
+            let region = GKQuad(quadMin: lb, quadMax: rt)
+            let elements = quadTree.elements(in: region)
+            if let first = elements.first {
+                let closest_pos = first.position
+                let dist2 = CGPointDistanceSquared(from: pos, to: closest_pos)
+                if dist2 > 100 {
+                    return pos
+                }
+            } else {
+                return pos
+            }
+            try_time += 1
+        }
+        return nil
+    }
+    
     /**
      *  snake
      */
     func createSnake(type: String = "bot", name: String) -> Snake {
-        var x = 0.0, y = 0.0
         var snake: Snake
-        while (true) {
-            x = Double.random(in: 0.0..<Double(self.worldsize.width))
-            y = Double.random(in: 0.0..<Double(self.worldsize.height))
-//            var closest = self.physics.closest({ x, y }, self.snakes.reduce((res, snake) => res.concat(snake.sectionGroup.getChildren()), []))
-//            if (!closest) {break}
-//            var dis = distance_squared((closest.x, closest.y), (x,y))
-//            if (dis > 100) {break}
-            break
-        }
+        let pos = randomPointForSnake()!
         if type == "bot" {
-            snake = BotSnake(x:x, y:y, name:name)
+            snake = BotSnake(scene: self, pos: pos, name: name)
         }
         else {
-            snake = PlayerSnake(x:x,y:y,name:name)
+            snake = PlayerSnake(scene: self, pos: pos, name: name)
         }
 //        s.head.setCollideWorldBounds(true)
 //        s.head.body.onWorldBounds = true
-        addChild(snake.sections)
+        for enemy in snakes {
+            enemy.enemies.append(contentsOf: snake.sections.children)
+            snake.enemies.append(contentsOf: enemy.sections.children)
+        }
         snakes.append(snake)
+        addChild(snake.root)
         return snake
     }
 
@@ -219,24 +284,23 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
      * @param  {number} y y-coordinate
      * @return {Food}   food object created
      */
-    func createFood(x: Double, y: Double, amount: Double = Double.random(in: 0.5..<1), key: String = "food") -> Food? {
-        if let food = Food(fileNamed: key) {
-            food.name = "food"
-            
-//            food.tint = Int.randomIntNumber(upper: 0xffffff)
-            food.alpha = CGFloat(Double.random(in: 0.5..<1))
-            food.userData?["amount"] = amount
-            food.setScale(CGFloat(0.3 + amount))
-            
-            //food.body.setCircle(food.width * 0.5)
-            self.foods.append(food)
-            return food
-        }
-        return nil
+    func createFood(x: Double, y: Double, amount: Double = Double.random(in: 0.5..<1), key: String = "hex.png") -> Food {
+        let food = Food(imageNamed: key)
+        food.color = UIColor(red: CGFloat.random(in: 0.5...1),
+                             green: CGFloat.random(in: 0.5...1),
+                             blue: CGFloat.random(in: 0.5...1),
+                             alpha: CGFloat.random(in: 0.4...0.8))
+        food.colorBlendFactor = 1
+        food.userData?.setValue(amount, forKey: "amount")
+        food.setScale(CGFloat(0.3 + amount))
+        food.position = self.randomPoint()
+//        food.physicsBody
+//        food.body.setCircle(food.width * 0.5)
+        self.foodNode.addChild(food)
+        self.foodQuadTree.add(food, at: vector2(Float(food.position.x), Float(food.position.y)))
+        return food
     }
 
-    
-    
     func touchDown(atPoint pos : CGPoint) {
 //        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
 //            n.position = pos
@@ -259,6 +323,23 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
 //            n.strokeColor = SKColor.red
 //            self.addChild(n)
 //        }
+    }
+    
+    func closestSnake(pos: CGPoint, t: Float = 200, l: Float = 200, b: Float = 200, r: Float = 200) -> SKNode? {
+        let bounding = GKQuad(quadMin: vector2(
+                                Float(-self.worldSize.width/2), Float(-self.worldSize.height/2)),
+                              quadMax: vector2(
+                                Float(self.worldSize.width/2), Float(self.worldSize.height/2)))
+        let quadTree = GKQuadtree<SKNode>(boundingQuad: bounding, minimumCellSize: 10)
+        for snake in self.snakes {
+            for sec in snake.sections.children {
+                quadTree.add(sec, at: vector2(Float(sec.position.x), Float(sec.position.y)))
+            }
+        }
+        
+        let bounding2 = GKQuad(quadMin: vector2(Float(pos.x-l), Float(pos.y-b)),
+                              quadMax: vector2(Float(pos.x+r), Float(pos.y+t)))
+        return quadTree.elements(in: bounding2).first
     }
     
 }

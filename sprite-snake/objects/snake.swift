@@ -13,49 +13,89 @@ import GameplayKit
 
 class Snake {
     static var globalKey = 0
-    static let slowSpeed = 150
-    static let fastSpeed = 200
-    static let rotateSpeed = 150
+    static let slowSpeed: CGFloat = 1.5
+    static let fastSpeed: CGFloat = 2.0
+    static let rotateSpeed: CGFloat = 1.5
     static let initLength = 6
-    static let distanceIndex = 17.0
+    static let distanceIndex: CGFloat = 17.0
 
-    var scale = 0.5
+    var scale: CGFloat = 0.5
     var speed = slowSpeed
     
     var globalKey:Int
     
-    var preferredDistance = 0.0
-    var headPath: [(Double, Double)] = []
-    var lastHeadPosition: (Double, Double) = (0,0)
+    var preferredDistance: CGFloat = 0.0
+    var headPath: [CGPoint] = []
+    var lastHeadPosition: CGPoint = CGPoint(x: 0,y: 0)
     
     var queuedSections = 0.0
     var loss = 0.0
     
+    var root = SKNode()
     var sections = SKNode()
     var head: SKSpriteNode? = nil
     
-    var spriteKey = "circle"
+//    var spriteKey = "circle"
     
-    init(x:Double, y:Double, name:String) {
+    var detector = SKNode()
+    var enemies: [SKNode] = []
+    
+    var label = SKLabelNode()
+    
+    let scene: SKScene
+    
+    init(scene: SKScene, pos: CGPoint, name:String) {
         self.globalKey = Snake.globalKey
         Snake.globalKey+=1
+        
+        self.scene = scene
         
         self.setScale(0.5)
         
         for _ in 0...Snake.initLength {
-            _ = self.addSectionAtPosition(x:x, y:y,secSpriteKey: self.spriteKey) // 60x60
-            self.headPath.append((x, y))
+            _ = self.addSectionAtPosition(pos: pos, imageNamed: "circle.png") // 60x60
+            self.headPath.append(pos)
         }
-        
         self.head = self.sections.children.first as? SKSpriteNode
+        self.root.addChild(self.sections)
+        
+        self.label.text = name
+        self.root.addChild(self.label)
+        
+        
+        self.detector.position = self.head!.position
+        self.detector.alpha = 0
+        self.detector.setScale(self.scale / 8)
+        self.root.addChild(self.detector)
     }
     
     /**
      * 更新时调用
+     *
      */
     func update() {
+        // 子类只需要设置蛇头的角速度和speed即可
+        // self.head?.physicsBody?.applyAngularImpulse()
+        // 蛇的速度大小不会任意变化
         
-    
+//        var v = self.head?.physicsBody?.velocity
+//        if v?.dx == 0 && v?.dy == 0 {
+//            v = CGVector(dx: speed, dy: 0)
+//        }
+//        let dxSpeed = abs(CGFloat((v!.dx)))
+//        let dySpeed = abs(CGFloat((v!.dy)))
+//        let speed = sqrt(dxSpeed + dySpeed)
+//        let radiansCon = atan(v!.dy / v!.dx)
+        let radiansCon = self.head?.zRotation
+//        let angleCon = radiansCon * 180 / Double.pi
+        
+        let dx = self.speed * cos(radiansCon!)
+        let dy = self.speed * sin(radiansCon!)
+        self.head?.physicsBody?.velocity = CGVector(dx: dx, dy: dy)
+
+        let pos = self.head!.position
+//        print(pos)
+        self.label.position = CGPoint(x: pos.x, y: pos.y + 30)
     }
     
     /**
@@ -65,13 +105,21 @@ class Snake {
     
     }
 
-    func addSectionAtPosition(x:Double,y:Double,secSpriteKey:String = "circle") -> SKSpriteNode? {
-        if let sec = SKSpriteNode(fileNamed: secSpriteKey) {
-            sec.setScale(CGFloat(self.scale))
-            self.sections.addChild(sec)
-            return sec
-        }
-        return nil
+    func addSectionAtPosition(pos: CGPoint, imageNamed: String = "circle.png") -> SKSpriteNode {
+        let sec = SKSpriteNode(imageNamed: imageNamed)
+        sec.position = pos
+        sec.setScale(self.scale)
+        sec.color = UIColor(red: CGFloat.random(in: 0.5...1),
+                             green: CGFloat.random(in: 0.5...1),
+                             blue: CGFloat.random(in: 0.5...1),
+                             alpha: 1)
+        sec.colorBlendFactor = 1
+        sec.physicsBody = SKPhysicsBody(circleOfRadius: self.scale, center: pos)
+        sec.physicsBody?.affectedByGravity = false
+        sec.physicsBody?.mass = 1
+        sec.physicsBody?.collisionBitMask = 0
+        self.sections.addChild(sec)
+        return sec
     }
     
     
@@ -89,7 +137,7 @@ class Snake {
         
     }
     
-    func setScale(_ scale: Double) {
+    func setScale(_ scale: CGFloat) {
         self.scale = scale
         self.preferredDistance = Snake.distanceIndex * self.scale
     }

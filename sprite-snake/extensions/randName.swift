@@ -24,6 +24,6 @@ public extension String {
                      "Joshua", "Stewart", "Samantha", "Forsyth",
                      "Brandon", "Simpson", "Alan", "Burgess",
                      "Piers", "Graham"]
-        return names[Int.random(in: 0...names.count)]
+        return names[Int.random(in: 0..<names.count)]
     }
 }

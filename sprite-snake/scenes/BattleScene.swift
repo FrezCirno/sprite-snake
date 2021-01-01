@@ -77,8 +77,8 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     
     func create() {
         if (true) {
-            self.worldSize = CGSize(width: 500, height: 500)
-            self.foodCount = 100
+            self.worldSize = CGSize(width: 1000, height: 1000)
+            self.foodCount = 10
             self.botCount = 1
         } else {
             self.worldSize = CGSize(width: 5000, height: 5000)
@@ -177,6 +177,13 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
     }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        let bodyA = contact.bodyA
+        let bodyB = contact.bodyB
+        if bodyA.categoryBitMask
+    }
+    
     
     override func update(_ currentTime: TimeInterval) {
         // update camera
@@ -294,8 +301,10 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         food.userData?.setValue(amount, forKey: "amount")
         food.setScale(CGFloat(0.3 + amount))
         food.position = self.randomPoint()
-//        food.physicsBody
-//        food.body.setCircle(food.width * 0.5)
+        food.physicsBody = SKPhysicsBody(circleOfRadius: food.xScale / 8, center: food.position)
+        food.physicsBody?.categoryBitMask = Category.Food.rawValue
+        food.physicsBody?.collisionBitMask = 0
+        food.physicsBody?.contactTestBitMask = 0
         self.foodNode.addChild(food)
         self.foodQuadTree.add(food, at: vector2(Float(food.position.x), Float(food.position.y)))
         return food
@@ -325,7 +334,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
 //        }
     }
     
-    func closestSnake(pos: CGPoint, t: Float = 200, l: Float = 200, b: Float = 200, r: Float = 200) -> SKNode? {
+    func closestSnake(pos: CGPoint, t: CGFloat = 200, l: CGFloat = 200, b: CGFloat = 200, r: CGFloat = 200) -> Snake? {
         let bounding = GKQuad(quadMin: vector2(
                                 Float(-self.worldSize.width/2), Float(-self.worldSize.height/2)),
                               quadMax: vector2(
@@ -339,7 +348,8 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         
         let bounding2 = GKQuad(quadMin: vector2(Float(pos.x-l), Float(pos.y-b)),
                               quadMax: vector2(Float(pos.x+r), Float(pos.y+t)))
-        return quadTree.elements(in: bounding2).first
+        
+        return quadTree.elements(in: bounding2).first?.userData?.value(forKey: "snake") as? Snake
     }
     
 }

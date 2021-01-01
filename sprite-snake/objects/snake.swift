@@ -33,7 +33,7 @@ class Snake {
     
     var root = SKNode()
     var sections = SKNode()
-    var head: SKSpriteNode? = nil
+    var head: SKSpriteNode! = nil
     
 //    var spriteKey = "circle"
     
@@ -57,6 +57,9 @@ class Snake {
             self.headPath.append(pos)
         }
         self.head = self.sections.children.first as? SKSpriteNode
+        self.head.physicsBody?.categoryBitMask = Category.Sections.rawValue
+        self.head.physicsBody?.collisionBitMask = 0
+        self.head.physicsBody?.contactTestBitMask = Category.Food.rawValue
         self.root.addChild(self.sections)
         
         self.label.text = name
@@ -66,6 +69,10 @@ class Snake {
         self.detector.position = self.head!.position
         self.detector.alpha = 0
         self.detector.setScale(self.scale / 8)
+        self.detector.physicsBody = SKPhysicsBody(circleOfRadius: self.scale / 8, center: self.detector.position)
+        self.detector.physicsBody?.categoryBitMask = Category.Detector.rawValue
+        self.detector.physicsBody?.collisionBitMask = 0
+        self.detector.physicsBody?.contactTestBitMask = Category.Sections.rawValue
         self.root.addChild(self.detector)
     }
     
@@ -101,12 +108,13 @@ class Snake {
     /**
      *
      */
-    deinit{
-    
+    deinit {
+        
     }
 
     func addSectionAtPosition(pos: CGPoint, imageNamed: String = "circle.png") -> SKSpriteNode {
         let sec = SKSpriteNode(imageNamed: imageNamed)
+        sec.name = "sections"
         sec.position = pos
         sec.setScale(self.scale)
         sec.color = UIColor(red: CGFloat.random(in: 0.5...1),
@@ -114,10 +122,13 @@ class Snake {
                              blue: CGFloat.random(in: 0.5...1),
                              alpha: 1)
         sec.colorBlendFactor = 1
+        sec.userData?.setValue(self, forKey: "snake")
         sec.physicsBody = SKPhysicsBody(circleOfRadius: self.scale, center: pos)
         sec.physicsBody?.affectedByGravity = false
         sec.physicsBody?.mass = 1
+        sec.physicsBody?.categoryBitMask = Category.Sections.rawValue
         sec.physicsBody?.collisionBitMask = 0
+        sec.physicsBody?.contactTestBitMask = 0
         self.sections.addChild(sec)
         return sec
     }

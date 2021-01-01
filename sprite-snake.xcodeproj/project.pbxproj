@@ -15,6 +15,7 @@
 		6CAC6F50259EF5040048B3F9 /* MenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F4F259EF5040048B3F9 /* MenuScene.swift */; };
 		6CAC6F56259EF8DB0048B3F9 /* BattleScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6CAC6F55259EF8DB0048B3F9 /* BattleScene.sks */; };
 		6CF74AE0259F9DBE002E7DD6 /* angleBetween.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF74ADF259F9DBE002E7DD6 /* angleBetween.swift */; };
+		6CF74AE7259FB3B3002E7DD6 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF74AE6259FB3B3002E7DD6 /* Category.swift */; };
 		EC4C641E259B3714008F3051 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4C641D259B3714008F3051 /* AppDelegate.swift */; };
 		EC4C6422259B3714008F3051 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = EC4C6421259B3714008F3051 /* Actions.sks */; };
 		EC4C6424259B3714008F3051 /* BattleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4C6423259B3714008F3051 /* BattleScene.swift */; };
@@ -36,6 +37,7 @@
 		6CAC6F4F259EF5040048B3F9 /* MenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScene.swift; sourceTree = "<group>"; };
 		6CAC6F55259EF8DB0048B3F9 /* BattleScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BattleScene.sks; sourceTree = "<group>"; };
 		6CF74ADF259F9DBE002E7DD6 /* angleBetween.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = angleBetween.swift; sourceTree = "<group>"; };
+		6CF74AE6259FB3B3002E7DD6 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		EC4C641A259B3714008F3051 /* sprite-snake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "sprite-snake.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC4C641D259B3714008F3051 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EC4C6421259B3714008F3051 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 				EC4C642C259B3715008F3051 /* LaunchScreen.storyboard */,
 				EC4C642F259B3715008F3051 /* Info.plist */,
 				6CAC6F4A259EEB3F0048B3F9 /* MyTileSet.sks */,
+				6CF74AE6259FB3B3002E7DD6 /* Category.swift */,
 			);
 			path = "sprite-snake";
 			sourceTree = "<group>";
@@ -222,6 +225,7 @@
 				EC4C6424259B3714008F3051 /* BattleScene.swift in Sources */,
 				EC4C6426259B3714008F3051 /* GameViewController.swift in Sources */,
 				EC4C641E259B3714008F3051 /* AppDelegate.swift in Sources */,
+				6CF74AE7259FB3B3002E7DD6 /* Category.swift in Sources */,
 				6CAC6F34259EBB730048B3F9 /* PlayerSnake.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

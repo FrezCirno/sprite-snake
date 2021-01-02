@@ -15,54 +15,83 @@ import GameplayKit
 
 class PlayerSnake: Snake {
 
+    var touchPos: CGPoint? = nil
+    
     override init(scene: SKScene, pos: CGPoint, name:String) {
         super.init(scene: scene, pos: pos, name: name)
     }
 
+    func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for t in touches {
+            touchPos = t.location(in: self.scene)
+        }
+    }
+    
+    func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for t in touches {
+            touchPos = t.location(in: self.scene)
+        }
+    }
+    
+    func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for t in touches {
+            touchPos = nil
+        }
+    }
+    
+    func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for t in touches {
+            touchPos = nil
+        }
+    }
+    
+    
     /**
      * Add functionality to the original snake update method so that the player
-     * can control where this snake goes
+     * can control where self snake goes
      */
     override func update() {
-        // const headX = this.head.x;
-        // const headY = this.head.y;
-        // const mousePosX = this.scene.input.activePointer.worldX || 0;
-        // const mousePosY = this.scene.input.activePointer.worldY || 0;
-        // const angle = Phaser.Math.Angle.Between(headX, headY, mousePosX, mousePosY);
-        // let dif = angle - this.head.rotation;
-        // if (dif > Math.PI) dif -= 2 * Math.PI;
-        // else if (dif < -Math.PI) dif += 2 * Math.PI;
+        if let touchPos = touchPos {
+            let angle = CGVector.angleBetween(p1: CGPoint(x:1,y:0), p2: touchPos)
+            var dif = angle - self.head.zRotation
+            if dif > CGFloat.pi {
+                dif -= 2 * CGFloat.pi
+            }
+            else if dif < -CGFloat.pi {
+                dif += 2 * CGFloat.pi
+            }
+            self.head.physicsBody?.angularVelocity = dif * Snake.rotateSpeed // 不断调整角速度以达到平滑转弯的效果
+        } else {
+            self.head.physicsBody?.angularVelocity = 0
+        }
 
-        // this.head.setAngularVelocity(dif * this.rotationSpeed); // 不断调整角速度以达到平滑转弯的效果
+        // self.status.setText('Your length: ' + self.sectionGroup.getLength())
 
-        // this.status.setText('Your length: ' + this.sectionGroup.getLength())
-
-        // var list = this.scene.snakes
+        // var list = self.scene.snakes
         //     .map(snake => ({ text: snake.label.text, size: snake.sectionGroup.getLength(), snake }))
         //     .sort((a, b) => b.size - a.size)
         //     .map((snake, index) => Phaser.Utils.String.Pad(index + 1, 3, ' ', 1) + '  ' + Phaser.Utils.String.Pad(snake.text, 10, ' ', 2) + snake.size)
 
         // list.unshift('  #  Rank list')
 
-        // this.rank.setText(list)
+        // self.rank.setText(list)
 
-        //call the original snake update method
-        super.update();
+        super.update()
     }
 
     deinit {
-        // var start = this.scene.scene.get('start')
-        // start.best = Math.max(start.best || 0, this.sectionGroup.getLength())
-        // this.scene.sound.play('death')
-        // this.status.destroy();
-        // this.rank.destroy();
-        // var closest = this.scene.physics.closest(this.head, this.others.map(other => other.getChildren()[0]._snake.head))
-        // if (closest) this.scene.cameras.main.startFollow(closest);
-        // this.scene.input.off('pointerdown', this.pointerdown, this);
-        // this.scene.input.off('pointerup', this.pointerup, this);
+        // var start = self.scene.scene.get('start')
+        // start.best = Math.max(start.best || 0, self.sectionGroup.getLength())
+        // self.scene.sound.play('death')
+        // self.status.destroy();
+        // self.rank.destroy();
+        // var closest = self.scene.physics.closest(self.head, self.others.map(other => other.getChildren()[0]._snake.head))
+        // if (closest) self.scene.cameras.main.startFollow(closest);
+        // self.scene.input.off('pointerdown', self.pointerdown, self);
+        // self.scene.input.off('pointerup', self.pointerup, self);
 //        super.deinit()
 
-        // this.scene.scene.sendToBack('battle').run('start');
+        // self.scene.scene.sendToBack('battle').run('start');
     }
 
 

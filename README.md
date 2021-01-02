@@ -102,6 +102,13 @@
     - SKNode 蛇2
     - SKNode 蛇3
 
+## 行进方向确定
+
+当前角度/速度方向 zRotation
+
+点击位置（基于原点） touch_pos
+
+
 
 ## 蛇身设计
 

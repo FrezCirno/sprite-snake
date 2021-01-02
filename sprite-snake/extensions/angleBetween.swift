@@ -26,4 +26,12 @@ public extension CGVector {
     static func distanceSquareBetween(p1:CGPoint, p2:CGPoint) -> CGFloat{
         return pow(p1.x-p2.x,2)+pow(p1.y-p2.y,2)
     }
+    
+    func speed() -> CGFloat {
+        return sqrt(dx*dx+dy*dy)
+    }
+    
+    func angle() -> CGFloat {
+        return atan2(dy, dx)
+    }
 }

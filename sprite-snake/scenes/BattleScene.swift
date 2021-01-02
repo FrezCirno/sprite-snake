@@ -39,7 +39,6 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     /* Game management */
     var gameState: GameSceneState = .Running
     
-    
     var worldSize = CGSize(width: 0, height: 0)
     
     var foodCount = 0
@@ -51,6 +50,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     
     let cam = SKCameraNode()
     var followedSnake: Snake?
+    var controlledSnake: PlayerSnake?
     
     var foodQuadTree: GKQuadtree<SKNode>! = nil
     
@@ -79,7 +79,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         if (true) {
             self.worldSize = CGSize(width: 800, height: 800)
             self.foodCount = 10
-            self.botCount = 1
+            self.botCount = 0
         } else {
             self.worldSize = CGSize(width: 5000, height: 5000)
             self.foodCount = 500
@@ -130,8 +130,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
 
         // 随机创建食物
         for _ in 0..<self.foodCount {
-            _ = self.createFood(x: Double.random(in: 0.0..<Double(self.worldSize.width)),
-                                y: Double.random(in: 0.0..<Double(self.worldSize.height)))
+            _ = self.createFood()
         }
         addChild(self.foodNode)
         
@@ -147,40 +146,39 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
 
         // 重新进入此scene时(说明gameover), 创建玩家
 //        self.events.on("resume", () => {
-//            var player = self.createSnake(PlayerSnake, prompt("Please enter your name", "player"))
+        controlledSnake = (self.createSnake(type: "player", name: "player") as! PlayerSnake)
 //            self.cameras.main
 //                .startFollow(player.head)
 //                .setLerp(1, 1)
 //        }, self)
-//
-//        self.events.on("resize", () => {
-//            self.game.config.width = window.innerWidth
-//            self.game.config.height = window.innerHeight
-//        })
     }
     
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        if let label = self.label {
-//            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-//        }
-//
-//        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
+        if gameState == .Running {
+            controlledSnake?.touchesBegan(touches, with: event)
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
+        if gameState == .Running {
+            controlledSnake?.touchesMoved(touches, with: event)
+        }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+        if gameState == .Running {
+            controlledSnake?.touchesEnded(touches, with: event)
+        }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+        if gameState == .Running {
+            controlledSnake?.touchesCancelled(touches, with: event)
+        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
+        print("contact!")
         let bodyA = contact.bodyA
         let bodyB = contact.bodyB
         if bodyA.categoryBitMask.isMultiple(of: Category.Detector.rawValue) && bodyB.categoryBitMask.isMultiple(of: Category.Sections.rawValue) {
@@ -195,6 +193,15 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    override func didSimulatePhysics() {
+        for snake in snakes {
+            if let body = snake.head.physicsBody {
+                if (body.velocity.speed() > 0.01) {
+                    snake.head.zRotation = body.velocity.angle()
+                }
+            }
+        }
+    }
     
     override func update(_ currentTime: TimeInterval) {
         // update camera
@@ -222,17 +229,9 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         
         // try create a food
         if (self.foodNode.children.count < self.foodCount) {
-            _ = self.createFood(x: Double.random(in: 0.0..<Double(self.worldSize.width)),
-                                y: Double.random(in: 0.0..<Double(self.worldSize.height)),
-                                amount: 1)
+            _ = self.createFood(amount: 1)
         }
     }
-
-    
-    func CGPointDistanceSquared(from: CGPoint, to: CGPoint) -> CGFloat {
-        return (from.x - to.x) * (from.x - to.x) + (from.y - to.y) * (from.y - to.y)
-    }
-    
     
     func randomPoint() -> CGPoint {
         let xrange = (-self.worldSize.width/2)...(self.worldSize.width/2)
@@ -261,7 +260,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
             let elements = quadTree.elements(in: region)
             if let first = elements.first {
                 let closest_pos = first.position
-                let dist2 = CGPointDistanceSquared(from: pos, to: closest_pos)
+                let dist2 = CGVector.distanceSquareBetween(p1: pos, p2: closest_pos)
                 if dist2 > 100 {
                     return pos
                 }
@@ -302,7 +301,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
      * @param  {number} y y-coordinate
      * @return {Food}   food object created
      */
-    func createFood(x: Double, y: Double, amount: Double = Double.random(in: 0.5..<1), key: String = "hex.png") -> Food {
+    func createFood(amount: CGFloat = CGFloat.random(in: 0.5..<1), key: String = "hex.png") -> Food {
         let food = Food(imageNamed: key)
         food.color = UIColor(red: CGFloat.random(in: 0.5...1),
                              green: CGFloat.random(in: 0.5...1),
@@ -319,30 +318,6 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         self.foodNode.addChild(food)
         self.foodQuadTree.add(food, at: vector2(Float(food.position.x), Float(food.position.y)))
         return food
-    }
-
-    func touchDown(atPoint pos : CGPoint) {
-//        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-//            n.position = pos
-//            n.strokeColor = SKColor.green
-//            self.addChild(n)
-//        }
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-//        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-//            n.position = pos
-//            n.strokeColor = SKColor.blue
-//            self.addChild(n)
-//        }
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-//        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-//            n.position = pos
-//            n.strokeColor = SKColor.red
-//            self.addChild(n)
-//        }
     }
     
     func closestSnakes(pos: CGPoint, t: CGFloat = 200, l: CGFloat = 200, b: CGFloat = 200, r: CGFloat = 200) -> [Snake] {

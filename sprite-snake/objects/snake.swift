@@ -13,9 +13,9 @@ import GameplayKit
 
 class Snake {
     static var globalKey = 0
-    static let slowSpeed: CGFloat = 0.5
-    static let fastSpeed: CGFloat = 1.5
-    static let rotateSpeed: CGFloat = 0.1
+    static let slowSpeed: CGFloat = 50
+    static let fastSpeed: CGFloat = 150
+    static let rotateSpeed: CGFloat = 1.5
     static let initLength = 6
     static let distanceIndex: CGFloat = 17.0
 
@@ -54,7 +54,7 @@ class Snake {
         self.setScale(0.5)
         
         for _ in 0...Snake.initLength {
-            _ = self.addSectionAtPosition(pos: pos, imageNamed: "circle.png") // 60x60
+            _ = self.addSectionAtPosition(pos: pos, imageNamed: "xxxx") // 60x60
             self.headPath.append(pos)
         }
         self.head = self.sections.first
@@ -87,7 +87,7 @@ class Snake {
         let radiansCon = self.head?.zRotation
         let dx = self.speed * cos(radiansCon!)
         let dy = self.speed * sin(radiansCon!)
-        self.head?.physicsBody?.velocity = CGVector(dx: dx, dy: dy)
+        self.head?.physicsBody?.velocity = CGVector(dx: 10, dy: 0)
 
         // 把路径上的最后一个节点移到最开头
         if var point = self.headPath.popLast() {
@@ -119,7 +119,7 @@ class Snake {
             let lastPos = self.headPath.last!
             self.headPath.append(CGPoint(x: lastPos.x, y: lastPos.y))
         } else if index < self.headPath.count {
-            self.headPath.removeSubrange(index..<self.headPath.count)
+            self.headPath.removeSubrange(index+1..<self.headPath.count)
             assert(self.headPath.count > 0)
         }
 
@@ -137,7 +137,7 @@ class Snake {
             self.lastHeadPosition = CGPoint(x: self.headPath[0].x, y: self.headPath[0].y)
             self.onOneStepComplete()
         }
-        print(self.headPath.count)
+//        print(self.headPath.count)
         
         self.label.position = CGPoint(x: self.head.position.x, y: self.head.position.y + 30)
         self.detector.position = CGPoint(x: self.head.position.x + 40 * cos(radiansCon!), y: self.head.position.y + 40 * sin(radiansCon!))
@@ -173,12 +173,10 @@ class Snake {
         return sec
     }
     
-    
     func randColor() -> Int {
         let colors = [0xffff66, 0xff6600, 0x33cc33, 0x00ccff, 0xcc66ff]
         return colors[Int.random(in: 0...colors.count)]
     }
-    
     
     func findNextPointIndex(currentIndex:Int) -> Int {
         
@@ -212,7 +210,50 @@ class Snake {
     }
     
     func onOneStepComplete() {
-        
+        let seclen = self.sections.count
+        if seclen < Snake.initLength {
+            self.queuedSections -= CGFloat((self.speed == Snake.fastSpeed ? seclen / 10 : seclen / 100))
+        }
+
+        if (self.queuedSections >= 1) {
+            let last = self.sections.last!
+            _ = self.addSectionAtPosition(pos: last.position)
+
+            // 动态增长效果
+            let length = self.headPath.count
+            for i in length-1...0 {
+                if (last.position.x == self.headPath[i].x && last.position.y == self.headPath[i].y) {
+                    self.headPath.removeSubrange(i+1...length)
+                    break
+                }
+            }
+
+//            self.shadow.add(last.x, last.y)
+
+            self.setScale(self.scale * 1.01);
+            self.queuedSections-=1
+
+        } else if self.queuedSections <= -1 {
+            let last = self.sections.last!
+
+            let loss = CGFloat.random(in: 0.5 ... -self.queuedSections)
+            _ = (self.scene as! BattleScene).createFood(amount: loss)
+
+            self.loss += loss
+            if self.loss >= 1 {
+                last.removeFromParent()
+                _ = self.sections.popLast()
+
+//                let ls = self.shadow.shadowGroup.getLast(true);
+//                self.shadow.shadowGroup.remove();
+//                ls.destroy();
+
+                self.setScale(self.scale * 0.99)
+                self.loss = 0
+            }
+
+            self.queuedSections += loss
+        }
     }
     
     func setScale(_ scale: CGFloat) {

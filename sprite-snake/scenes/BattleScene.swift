@@ -36,6 +36,10 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
 //    let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS */
 //    let scrollSpeed: CGFloat = 160
     
+    var entities = [GKEntity]()
+    
+    private var lastUpdateTime : TimeInterval = 0
+    
     /* Game management */
     var gameState: GameSceneState = .Running
     
@@ -57,8 +61,12 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     let deviceWidth = UIScreen.main.bounds.width
     let deviceHeight = UIScreen.main.bounds.height
     
+    override func sceneDidLoad() {
+        self.lastUpdateTime = 0
+    
+    }
+    
     override func didMove(to view: SKView) {
-        /* Setup your scene here */
         
         /* Set physics contact delegate */
         self.physicsWorld.contactDelegate = self
@@ -79,7 +87,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         if (true) {
             self.worldSize = CGSize(width: 800, height: 800)
             self.foodCount = 10
-            self.botCount = 0
+            self.botCount = 3
         } else {
             self.worldSize = CGSize(width: 5000, height: 5000)
             self.foodCount = 500
@@ -114,7 +122,6 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(map)
         
-        
 //        self.physics.world.setBounds(-self.worldsize[0] / 2, -self.worldsize[1] / 2, self.worldsize[0], self.worldsize[1])
 
 //        self.physics.world.on("worldbounds", function (body) {
@@ -139,11 +146,6 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
             _ = self.createSnake(type: "bot", name: String.randName())
         }
 
-        // 跟随某个bot
-//        self.followedSnake = self.snakes[0]
-//        self.cameras.main.startFollow(self.snakes[0].head)
-//            .setBounds(-self.worldsize[0] / 2, -self.worldsize[1] / 2, self.worldsize[0], self.worldsize[1])
-
         // 重新进入此scene时(说明gameover), 创建玩家
 //        self.events.on("resume", () => {
         controlledSnake = (self.createSnake(type: "player", name: "player") as! PlayerSnake)
@@ -151,31 +153,37 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
 //                .startFollow(player.head)
 //                .setLerp(1, 1)
 //        }, self)
+        
+        // 跟随某个bot
+        self.followedSnake = controlledSnake ?? self.snakes[0]
+//        self.cameras.main.startFollow(self.snakes[0].head)
+//            .setBounds(-self.worldsize[0] / 2, -self.worldsize[1] / 2, self.worldsize[0], self.worldsize[1])
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if gameState == .Running {
-            controlledSnake?.touchesBegan(touches, with: event)
+            for t in touches { controlledSnake?.touchDown(atPoint: t.location(in: self)) }
         }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if gameState == .Running {
-            controlledSnake?.touchesMoved(touches, with: event)
+            for t in touches { controlledSnake?.touchMoved(toPoint: t.location(in: self)) }
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if gameState == .Running {
-            controlledSnake?.touchesEnded(touches, with: event)
+            for t in touches { controlledSnake?.touchUp(atPoint: t.location(in: self)) }
         }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         if gameState == .Running {
-            controlledSnake?.touchesCancelled(touches, with: event)
+            for t in touches { controlledSnake?.touchUp(atPoint: t.location(in: self)) }
         }
     }
+    
     
     func didBegin(_ contact: SKPhysicsContact) {
         print("contact!")
@@ -193,17 +201,25 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    override func didSimulatePhysics() {
-        for snake in snakes {
-            if let body = snake.head.physicsBody {
-                if (body.velocity.speed() > 0.01) {
-                    snake.head.zRotation = body.velocity.angle()
-                }
-            }
-        }
-    }
+//    override func didSimulatePhysics() {
+//        for snake in snakes {
+//            if let body = snake.head.physicsBody {
+//                if (body.velocity.speed() > 0.01) {
+//                    snake.head.zRotation = body.velocity.angle()
+//                }
+//            }
+//        }
+//    }
     
     override func update(_ currentTime: TimeInterval) {
+        // Initialize _lastUpdateTime if it has not already been
+        if (self.lastUpdateTime == 0) {
+            self.lastUpdateTime = currentTime
+        }
+        
+        // Calculate time since last update
+        let dt = currentTime - self.lastUpdateTime
+        
         // update camera
         if let position = self.followedSnake?.head?.position {
             self.cam.position = position
@@ -231,6 +247,8 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         if (self.foodNode.children.count < self.foodCount) {
             _ = self.createFood(amount: 1)
         }
+        
+        self.lastUpdateTime = currentTime
     }
     
     func randomPoint() -> CGPoint {

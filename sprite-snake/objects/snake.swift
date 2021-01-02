@@ -12,49 +12,46 @@ import GameplayKit
 
 
 class Snake {
-    static var globalKey = 0
-    static let slowSpeed: CGFloat = 50
+    static let slowSpeed: CGFloat = 100
     static let fastSpeed: CGFloat = 150
-    static let rotateSpeed: CGFloat = 1.5
+    static let rotateSpeed: CGFloat = 2
     static let initLength = 6
     static let distanceIndex: CGFloat = 17.0
 
-    var scale: CGFloat = 0.5
+    var scale: CGFloat = 1
     var speed = slowSpeed
     
-    var globalKey:Int
+    var globalKey = 0
     
     var preferredDistance: CGFloat = 0.0
-    var headPath: [CGPoint] = []
-    var lastHeadPosition: CGPoint = CGPoint(x: 0,y: 0)
+    var headPath = [CGPoint]()
+    var lastHeadPosition = CGPoint(x: 0,y: 0)
     
     var queuedSections: CGFloat = 0.0
     var loss: CGFloat = 0.0
     
     var root = SKNode()
     var sectionsNode = SKNode()
-    var sections: [SKSpriteNode] = []
+    var sections = [SKSpriteNode]()
     var head: SKSpriteNode! = nil
     
 //    var spriteKey = "circle"
     
     var detector = SKSpriteNode(color: .red, size: CGSize(width: 1, height: 1))
-    var enemies: [SKNode] = []
+    var enemies = [SKNode]()
     
     var label = SKLabelNode()
     
     let scene: SKScene
     
     init(scene: SKScene, pos: CGPoint, name:String) {
-        self.globalKey = Snake.globalKey
-        Snake.globalKey+=1
         
         self.scene = scene
         
         self.setScale(0.5)
         
-        for _ in 0...Snake.initLength {
-            _ = self.addSectionAtPosition(pos: pos, imageNamed: "xxxx") // 60x60
+        for _ in 0..<Snake.initLength {
+            _ = self.addSectionAtPosition(pos: pos) // 60x60
             self.headPath.append(pos)
         }
         self.head = self.sections.first
@@ -69,7 +66,7 @@ class Snake {
         
         self.detector.position = self.head!.position
         self.detector.size = self.head.size
-//        self.detector.alpha = 0 // Hide
+        self.detector.alpha = 0 // Hide
         self.detector.setScale(self.scale)
         self.detector.physicsBody = SKPhysicsBody(circleOfRadius: self.detector.size.width/2, center: self.detector.position)
         self.detector.physicsBody?.categoryBitMask = Category.Detector.rawValue
@@ -84,10 +81,11 @@ class Snake {
     func update() {
         // 子类只需要设置蛇头的角速度和speed即可
         // 蛇的速度大小不会任意变化
-        let radiansCon = self.head?.zRotation
-        let dx = self.speed * cos(radiansCon!)
-        let dy = self.speed * sin(radiansCon!)
-        self.head?.physicsBody?.velocity = CGVector(dx: 10, dy: 0)
+        let zRotation = self.head!.zRotation
+        print(zRotation)
+        let dx = self.speed * cos(zRotation)
+        let dy = self.speed * sin(zRotation)
+        self.head?.physicsBody?.velocity = CGVector(dx: dx, dy: dy)
 
         // 把路径上的最后一个节点移到最开头
         if var point = self.headPath.popLast() {
@@ -137,10 +135,10 @@ class Snake {
             self.lastHeadPosition = CGPoint(x: self.headPath[0].x, y: self.headPath[0].y)
             self.onOneStepComplete()
         }
-//        print(self.headPath.count)
         
         self.label.position = CGPoint(x: self.head.position.x, y: self.head.position.y + 30)
-        self.detector.position = CGPoint(x: self.head.position.x + 40 * cos(radiansCon!), y: self.head.position.y + 40 * sin(radiansCon!))
+        self.detector.position.x = self.head.position.x + 40 * cos(self.head!.zRotation)
+        self.detector.position.y = self.head.position.y + 40 * sin(self.head!.zRotation)
     }
     
     /**
@@ -162,12 +160,13 @@ class Snake {
         sec.colorBlendFactor = 1
         sec.userData = NSMutableDictionary()
         sec.userData?.setValue(self, forKey: "snake")
-        sec.physicsBody = SKPhysicsBody(circleOfRadius: self.scale, center: pos)
+        sec.physicsBody = SKPhysicsBody(circleOfRadius: 50)
         sec.physicsBody?.affectedByGravity = false
         sec.physicsBody?.mass = 1
         sec.physicsBody?.categoryBitMask = Category.Sections.rawValue
         sec.physicsBody?.collisionBitMask = 0
         sec.physicsBody?.contactTestBitMask = 0
+        sec.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
         self.sections.insert(sec, at: 0)
         self.sectionsNode.insertChild(sec, at: 0)
         return sec

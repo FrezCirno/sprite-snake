@@ -17,50 +17,40 @@ class PlayerSnake: Snake {
 
     var touchPos: CGPoint? = nil
     
-    override init(scene: SKScene, pos: CGPoint, name:String) {
+    override init(scene: SKScene, pos: CGPoint, name: String) {
         super.init(scene: scene, pos: pos, name: name)
     }
 
-    func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
-            touchPos = t.location(in: self.scene)
-        }
+    func touchDown(atPoint pos : CGPoint) {
+        touchPos = pos
     }
     
-    func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
-            touchPos = t.location(in: self.scene)
-        }
+    func touchMoved(toPoint pos : CGPoint) {
+        touchPos = pos
     }
     
-    func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
-            touchPos = nil
-        }
+    func touchUp(atPoint pos : CGPoint) {
+        touchPos = nil
     }
-    
-    func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches {
-            touchPos = nil
-        }
-    }
-    
     
     /**
      * Add functionality to the original snake update method so that the player
      * can control where self snake goes
      */
     override func update() {
+        let thisPos = self.head.position
+        let rot = self.head.zRotation
+        
         if let touchPos = touchPos {
-            let angle = CGVector.angleBetween(p1: CGPoint(x:1,y:0), p2: touchPos)
-            var dif = angle - self.head.zRotation
-            if dif > CGFloat.pi {
-                dif -= 2 * CGFloat.pi
+            let targetDirect = CGVector(dx: touchPos.x - thisPos.x, dy: touchPos.y - thisPos.y)
+            var diff = atan2(targetDirect.dy, targetDirect.dx) - rot
+            if diff > CGFloat.pi {
+                diff -= 2 * CGFloat.pi
             }
-            else if dif < -CGFloat.pi {
-                dif += 2 * CGFloat.pi
+            else if diff < -CGFloat.pi {
+                diff += 2 * CGFloat.pi
             }
-            self.head.physicsBody?.angularVelocity = dif * Snake.rotateSpeed // 不断调整角速度以达到平滑转弯的效果
+            self.head.physicsBody?.angularVelocity = diff * Snake.rotateSpeed // 不断调整角速度以达到平滑转弯的效果
         } else {
             self.head.physicsBody?.angularVelocity = 0
         }
@@ -93,6 +83,4 @@ class PlayerSnake: Snake {
 
         // self.scene.scene.sendToBack('battle').run('start');
     }
-
-
 }

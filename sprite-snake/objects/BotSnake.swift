@@ -68,7 +68,8 @@ class BotSnake: Snake {
         }
 
         // 防止撞车
-        if let snake = scene.closestSnake(pos: pos) {
+        let res = scene.closestSnakes(pos: pos).filter({ $0 !== self as Snake })
+        if let snake = res.first {
             let distOther = CGVector.distanceBetween(p1: pos, p2: snake.head!.position)
             let angleOther = CGVector.angleBetween(p1: pos, p2: snake.head!.position)
 
@@ -123,7 +124,7 @@ class BotSnake: Snake {
         
         self.head.physicsBody?.angularVelocity = rot * Snake.rotateSpeed
     
-        print(self.head?.physicsBody?.angularVelocity, self.head?.zRotation)
+//        print(self.head?.physicsBody?.angularVelocity, self.head?.zRotation)
         
         super.update()
     }

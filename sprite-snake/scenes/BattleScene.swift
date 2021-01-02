@@ -77,7 +77,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     
     func create() {
         if (true) {
-            self.worldSize = CGSize(width: 1000, height: 1000)
+            self.worldSize = CGSize(width: 800, height: 800)
             self.foodCount = 10
             self.botCount = 1
         } else {
@@ -90,10 +90,12 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         self.score.horizontalAlignmentMode = .left
         self.score.verticalAlignmentMode = .top
         self.score.fontName = "Halogen"
+        self.score.fontColor = .black
         
         self.scoreBoard.horizontalAlignmentMode = .right
         self.scoreBoard.verticalAlignmentMode = .top
         self.scoreBoard.fontName = "Halogen"
+        self.scoreBoard.fontColor = .black
         
         // 填充背景
         let map = SKNode()
@@ -139,7 +141,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         }
 
         // 跟随某个bot
-        self.followedSnake = self.snakes[0]
+//        self.followedSnake = self.snakes[0]
 //        self.cameras.main.startFollow(self.snakes[0].head)
 //            .setBounds(-self.worldsize[0] / 2, -self.worldsize[1] / 2, self.worldsize[0], self.worldsize[1])
 
@@ -181,7 +183,16 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     func didBegin(_ contact: SKPhysicsContact) {
         let bodyA = contact.bodyA
         let bodyB = contact.bodyB
-        if bodyA.categoryBitMask
+        if bodyA.categoryBitMask.isMultiple(of: Category.Detector.rawValue) && bodyB.categoryBitMask.isMultiple(of: Category.Sections.rawValue) {
+            print("Stucked")
+        }
+        if bodyA.categoryBitMask.isMultiple(of: Category.Head.rawValue) && bodyB.categoryBitMask.isMultiple(of: Category.Food.rawValue) {
+            print("Eat food")
+            let snake = bodyA.node?.userData?.value(forKey: "snake") as! Snake
+            snake.queuedSections += bodyB.node?.userData?.value(forKey: "amount") as! CGFloat
+            self.foodQuadTree.remove(bodyB.node!)
+            bodyB.node!.removeFromParent()
+        }
     }
     
     
@@ -276,10 +287,10 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         }
 //        s.head.setCollideWorldBounds(true)
 //        s.head.body.onWorldBounds = true
-        for enemy in snakes {
-            enemy.enemies.append(contentsOf: snake.sections.children)
-            snake.enemies.append(contentsOf: enemy.sections.children)
-        }
+//        for enemy in snakes {
+//            enemy.enemies.append(contentsOf: snake.sections.children)
+//            snake.enemies.append(contentsOf: enemy.sections.children)
+//        }
         snakes.append(snake)
         addChild(snake.root)
         return snake
@@ -334,14 +345,15 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
 //        }
     }
     
-    func closestSnake(pos: CGPoint, t: CGFloat = 200, l: CGFloat = 200, b: CGFloat = 200, r: CGFloat = 200) -> Snake? {
+    func closestSnakes(pos: CGPoint, t: CGFloat = 200, l: CGFloat = 200, b: CGFloat = 200, r: CGFloat = 200) -> [Snake] {
         let bounding = GKQuad(quadMin: vector2(
                                 Float(-self.worldSize.width/2), Float(-self.worldSize.height/2)),
                               quadMax: vector2(
                                 Float(self.worldSize.width/2), Float(self.worldSize.height/2)))
         let quadTree = GKQuadtree<SKNode>(boundingQuad: bounding, minimumCellSize: 10)
+        
         for snake in self.snakes {
-            for sec in snake.sections.children {
+            for sec in snake.sections {
                 quadTree.add(sec, at: vector2(Float(sec.position.x), Float(sec.position.y)))
             }
         }
@@ -349,7 +361,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         let bounding2 = GKQuad(quadMin: vector2(Float(pos.x-l), Float(pos.y-b)),
                               quadMax: vector2(Float(pos.x+r), Float(pos.y+t)))
         
-        return quadTree.elements(in: bounding2).first?.userData?.value(forKey: "snake") as? Snake
+        return quadTree.elements(in: bounding2).map { $0.userData?.value(forKey: "snake") as! Snake }
     }
     
 }

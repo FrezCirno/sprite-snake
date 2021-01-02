@@ -8,9 +8,11 @@
 
 import Foundation
 
-enum Category: UInt32 {
-    case Detector = 1
-    case Sections = 2
-    case Head = 4
-    case Food = 8
+struct Category: OptionSet {
+    let rawValue: UInt32
+    
+    static let Detector = Category(rawValue: 1 << 0)
+    static let Sections = Category(rawValue: 1 << 1)
+    static let Head = Category(rawValue: 1 << 2)
+    static let Food = Category(rawValue: 1 << 3)
 }

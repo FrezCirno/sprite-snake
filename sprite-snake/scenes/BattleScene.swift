@@ -184,20 +184,31 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func deleteSnake(_ snake: Snake) {
+        if let index = self.snakes.firstIndex { $0 === snake } {
+            self.snakes.remove(at: index)
+            for snake in self.snakes {
+                // do sth
+            }
+            snake.root.removeFromParent()
+        }
+    }
     
     func didBegin(_ contact: SKPhysicsContact) {
         print("contact!")
         let bodyA = contact.bodyA
         let bodyB = contact.bodyB
-        if bodyA.categoryBitMask.isMultiple(of: Category.Detector.rawValue) && bodyB.categoryBitMask.isMultiple(of: Category.Sections.rawValue) {
-            print("Stucked")
-        }
-        if bodyA.categoryBitMask.isMultiple(of: Category.Head.rawValue) && bodyB.categoryBitMask.isMultiple(of: Category.Food.rawValue) {
-            print("Eat food")
+        let bitMap = Category(rawValue: bodyA.categoryBitMask | bodyB.categoryBitMask)
+        if bitMap.contains(.Detector) && bitMap.contains(.Sections) {
             let snake = bodyA.node?.userData?.value(forKey: "snake") as! Snake
-            snake.queuedSections += bodyB.node?.userData?.value(forKey: "amount") as! CGFloat
-            self.foodQuadTree.remove(bodyB.node!)
-            bodyB.node!.removeFromParent()
+            self.deleteSnake(snake)
+        }
+        if bitMap.contains(.Food) && bitMap.contains(.Head) {
+            print("Eat food")
+            let snake = bodyB.node?.userData?.value(forKey: "snake") as! Snake
+            snake.queuedSections += bodyA.node?.userData?.value(forKey: "amount") as! CGFloat
+            self.foodQuadTree.remove(bodyA.node!)
+            bodyA.node!.removeFromParent()
         }
     }
     
@@ -326,10 +337,11 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
                              blue: CGFloat.random(in: 0.5...1),
                              alpha: CGFloat.random(in: 0.4...0.8))
         food.colorBlendFactor = 1
+        food.userData = NSMutableDictionary()
         food.userData?.setValue(amount, forKey: "amount")
         food.setScale(CGFloat(0.3 + amount))
         food.position = self.randomPoint()
-        food.physicsBody = SKPhysicsBody(circleOfRadius: food.xScale / 8, center: food.position)
+        food.physicsBody = SKPhysicsBody(circleOfRadius: food.xScale / 8)
         food.physicsBody?.categoryBitMask = Category.Food.rawValue
         food.physicsBody?.collisionBitMask = 0
         food.physicsBody?.contactTestBitMask = 0

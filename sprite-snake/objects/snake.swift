@@ -55,9 +55,9 @@ class Snake {
             self.headPath.append(pos)
         }
         self.head = self.sections.first
-        self.head.physicsBody?.categoryBitMask = Category.Sections.rawValue
+        self.head.physicsBody?.categoryBitMask |= Category.Head.rawValue
         self.head.physicsBody?.collisionBitMask = 0
-        self.head.physicsBody?.contactTestBitMask = Category.Food.rawValue
+        self.head.physicsBody?.contactTestBitMask |= Category.Food.rawValue
         self.root.addChild(self.sectionsNode)
         
         self.label.text = name
@@ -68,6 +68,8 @@ class Snake {
         self.detector.size = self.head.size
         self.detector.alpha = 0 // Hide
         self.detector.setScale(self.scale)
+        self.detector.userData = NSMutableDictionary()
+        self.detector.userData?.setValue(self, forKey: "snake")
         self.detector.physicsBody = SKPhysicsBody(circleOfRadius: self.detector.size.width/2, center: self.detector.position)
         self.detector.physicsBody?.categoryBitMask = Category.Detector.rawValue
         self.detector.physicsBody?.collisionBitMask = 0
@@ -82,7 +84,6 @@ class Snake {
         // 子类只需要设置蛇头的角速度和speed即可
         // 蛇的速度大小不会任意变化
         let zRotation = self.head!.zRotation
-        print(zRotation)
         let dx = self.speed * cos(zRotation)
         let dy = self.speed * sin(zRotation)
         self.head?.physicsBody?.velocity = CGVector(dx: dx, dy: dy)
@@ -141,10 +142,7 @@ class Snake {
         self.detector.position.y = self.head.position.y + 40 * sin(self.head!.zRotation)
     }
     
-    /**
-     *
-     */
-    deinit {
+    func destroy() {
         
     }
 
@@ -160,14 +158,13 @@ class Snake {
         sec.colorBlendFactor = 1
         sec.userData = NSMutableDictionary()
         sec.userData?.setValue(self, forKey: "snake")
-        sec.physicsBody = SKPhysicsBody(circleOfRadius: 50)
+        sec.physicsBody = SKPhysicsBody(circleOfRadius: sec.size.width / 2)
         sec.physicsBody?.affectedByGravity = false
         sec.physicsBody?.mass = 1
         sec.physicsBody?.categoryBitMask = Category.Sections.rawValue
         sec.physicsBody?.collisionBitMask = 0
         sec.physicsBody?.contactTestBitMask = 0
-        sec.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        self.sections.insert(sec, at: 0)
+        self.sections.append(sec)
         self.sectionsNode.insertChild(sec, at: 0)
         return sec
     }
@@ -220,9 +217,9 @@ class Snake {
 
             // 动态增长效果
             let length = self.headPath.count
-            for i in length-1...0 {
-                if (last.position.x == self.headPath[i].x && last.position.y == self.headPath[i].y) {
-                    self.headPath.removeSubrange(i+1...length)
+            for i in (0..<length).reversed() {
+                if (last.position == self.headPath[i]) {
+                    self.headPath.removeSubrange(i+1..<length)
                     break
                 }
             }

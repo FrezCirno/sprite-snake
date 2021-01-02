@@ -129,7 +129,8 @@ class BotSnake: Snake {
         super.update()
     }
 
-    func destroy() {
+    override func destroy() {
+        
     }
 
 }

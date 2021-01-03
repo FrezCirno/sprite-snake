@@ -15,21 +15,15 @@ class EyePair {
     let leftEye: Eye
     let rightEye: Eye
     
-    init(scene: BattleScene, head: SKSpriteNode, scale: CGFloat) {
+    init(scene: BattleScene, head: SKSpriteNode) {
         self.scene = scene
-        self.leftEye = Eye(scene: scene, head: head, xoff: -0.5, yoff: 0.3)
-        self.rightEye = Eye(scene: scene, head: head, xoff: 0.5, yoff: 0.3)
+        self.leftEye = Eye(scene: scene, head: head, xoff: 0.3, yoff: -0.5)
+        self.rightEye = Eye(scene: scene, head: head, xoff: 0.3, yoff: 0.5)
         self.eyes.append(leftEye)
         self.eyes.append(rightEye)
-        self.setScale(scale)
     }
     
     func update() {
         self.eyes.forEach { $0.update() }
     }
-    
-    func setScale(_ scale: CGFloat) {
-        self.eyes.forEach { $0.setScale(scale) }
-    }
-    
 }

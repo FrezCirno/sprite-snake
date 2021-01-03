@@ -19,11 +19,14 @@ class Eye {
     let xoff: CGFloat
     let yoff: CGFloat
     
+    let sizeInHeadCoord: CGSize
+    
     init(scene: BattleScene, head: SKSpriteNode, xoff: CGFloat, yoff: CGFloat) {
         self.scene = scene
         self.head = head
         self.xoff = xoff
         self.yoff = yoff
+        self.sizeInHeadCoord = head.size
         self.whiteCircle.zPosition = 9999
         self.head.addChild(self.whiteCircle)
         self.blackCircle.zPosition = 9999
@@ -33,7 +36,7 @@ class Eye {
     func update() {
         // 自然坐标系，运动方向为x轴正方向
         // 眼白朝向运动方向
-        self.whiteCircle.position = CGPoint(x: self.yoff * self.head.size.width, y: self.xoff * self.head.size.width)
+        self.whiteCircle.position = CGPoint(x: self.xoff * self.sizeInHeadCoord.width / 2, y: self.yoff * self.sizeInHeadCoord.width / 2)
         
         // 自然坐标系，运动方向为x轴正方向
         // 瞳孔朝向目标方向
@@ -47,14 +50,9 @@ class Eye {
             let v_cross = CGVector(dx: -v_velocity.dy, dy: v_velocity.dx)
             let x = v_mouse.proj(to: v_velocity)
             let y = v_mouse.proj(to: v_cross)
-            self.blackCircle.position = CGVector(dx: x, dy: y).nomalize().scale(by: radius * 10).asPoint()
+            self.blackCircle.position = CGVector(dx: x, dy: y).nomalize().scale(by: radius).asPoint()
         } else {
-            self.blackCircle.position = CGVector(dx:1, dy: 0).scale(by: radius * 10).asPoint()
+            self.blackCircle.position = CGPoint(x:radius, y: 0)
         }
-    }
-    
-    func setScale(_ scale: CGFloat) {
-        self.whiteCircle.setScale(scale)
-        self.blackCircle.setScale(scale)
     }
 }

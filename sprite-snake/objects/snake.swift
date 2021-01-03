@@ -58,8 +58,6 @@ class Snake {
         self.head.physicsBody?.categoryBitMask |= Category.Head.rawValue
         self.head.physicsBody?.collisionBitMask = 0
         self.head.physicsBody?.contactTestBitMask |= Category.Food.rawValue
-    
-        self.eyes = EyePair(scene: self.scene, head: self.head, scale: self.scale)
         self.root.addChild(self.sectionsNode)
         
         self.label.text = name
@@ -68,9 +66,9 @@ class Snake {
         self.root.addChild(self.label)
         
         self.detector.position = CGPoint(x: self.head.size.width, y: 0)
-        self.detector.size = CGSize(width: self.head.size.width/10, height: self.head.size.height/10)
+        self.detector.size = CGSize(width: self.head.size.width / 10, height: self.head.size.height / 10)
         self.detector.alpha = 1 // Hide
-        self.detector.setScale(self.scale)
+//        self.detector.setScale(self.scale)
         self.detector.userData = NSMutableDictionary()
         self.detector.userData?.setValue(self, forKey: "snake")
         self.detector.physicsBody = SKPhysicsBody(circleOfRadius: self.detector.size.width/2, center: self.detector.position)
@@ -79,6 +77,7 @@ class Snake {
         self.detector.physicsBody?.contactTestBitMask = Category.Sections.rawValue
         self.head.addChild(self.detector)
         
+        self.eyes = EyePair(scene: self.scene, head: self.head)
         self.shadow = Shadow(scene: self.scene, snake: self, scale: self.scale)
         self.setScale(0.5)
     }
@@ -161,7 +160,6 @@ class Snake {
         let sec = SKSpriteNode(imageNamed: imageNamed) // 60x60
         sec.name = "sections"
         sec.position = pos
-        sec.setScale(self.scale)
         sec.color = UIColor(red: CGFloat.random(in: 0.5...1),
                              green: CGFloat.random(in: 0.5...1),
                              blue: CGFloat.random(in: 0.5...1),

@@ -15,7 +15,7 @@ import GameplayKit
 
 class PlayerSnake: Snake {
 
-    override init(scene: BattleScene, pos: CGPoint, name: String) {
+    override init(scene: GameScene, pos: CGPoint, name: String) {
         super.init(scene: scene, pos: pos, name: name)
     }
 

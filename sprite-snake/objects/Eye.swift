@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 class Eye {
-    let scene: BattleScene
+    let scene: GameScene
     
     var whiteCircle = SKSpriteNode(imageNamed: "eye-white.png")
     var blackCircle = SKSpriteNode(imageNamed: "eye-black.png")
@@ -21,7 +21,7 @@ class Eye {
     
     let sizeInHeadCoord: CGSize
     
-    init(scene: BattleScene, head: SKSpriteNode, xoff: CGFloat, yoff: CGFloat) {
+    init(scene: GameScene, head: SKSpriteNode, xoff: CGFloat, yoff: CGFloat) {
         self.scene = scene
         self.head = head
         self.xoff = xoff

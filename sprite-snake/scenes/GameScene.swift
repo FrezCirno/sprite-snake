@@ -18,7 +18,7 @@ enum GameSceneState {
 }
 
 
-class BattleScene: SKScene, SKPhysicsContactDelegate {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /* Scene connections */
     var score: SKLabelNode!

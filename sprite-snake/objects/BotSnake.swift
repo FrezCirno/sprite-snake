@@ -25,7 +25,7 @@ class BotSnake: Snake {
     var trendRotation: CGFloat = 0
     
     
-    override init(scene: BattleScene, pos: CGPoint, name:String) {
+    override init(scene: GameScene, pos: CGPoint, name:String) {
         self.worldBoundCareness = CGFloat.random(in: 100...max(100,min(scene.worldSize.width, scene.worldSize.height)/50))
         
         super.init(scene: scene, pos: pos, name: name)

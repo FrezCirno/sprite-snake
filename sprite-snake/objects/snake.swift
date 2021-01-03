@@ -38,20 +38,17 @@ class Snake {
     var eyes: EyePair! = nil
     var shadow: Shadow! = nil
     
-//    var spriteKey = "circle"
-    
     var detector = SKSpriteNode(color: .red, size: CGSize(width: 1, height: 1))
-    var enemies = [SKNode]()
     
-    var label = SKLabelNode()
+    var label = SKLabelNode(fontNamed: "Halogen")
     
-    let scene: BattleScene
+    let scene: GameScene
     
-    init(scene: BattleScene, pos: CGPoint, name:String) {
+    init(scene: GameScene, pos: CGPoint, name:String) {
         self.scene = scene
         
         for _ in 0..<Snake.initLength {
-            _ = self.addSectionAtPosition(pos: pos) // 60x60
+            self.addSectionAtPosition(pos: pos) // 60x60
             self.headPath.append(pos)
         }
         self.head = self.sections.first
@@ -152,13 +149,8 @@ class Snake {
         self.shadow.update()
     }
     
-    func destroy() {
-        
-    }
-
-    func addSectionAtPosition(pos: CGPoint, imageNamed: String = "circle.png") -> SKSpriteNode {
+    func addSectionAtPosition(pos: CGPoint, imageNamed: String = "circle.png") {
         let sec = SKSpriteNode(imageNamed: imageNamed) // 60x60
-        sec.name = "sections"
         sec.position = pos
         sec.color = UIColor(red: CGFloat.random(in: 0.5...1),
                              green: CGFloat.random(in: 0.5...1),
@@ -169,19 +161,11 @@ class Snake {
         sec.userData = NSMutableDictionary()
         sec.userData?.setValue(self, forKey: "snake")
         sec.physicsBody = SKPhysicsBody(circleOfRadius: sec.size.width / 2)
-        sec.physicsBody?.affectedByGravity = false
-        sec.physicsBody?.mass = 1
         sec.physicsBody?.categoryBitMask = Category.Sections.rawValue
         sec.physicsBody?.collisionBitMask = 0
         sec.physicsBody?.contactTestBitMask = Category.Detector.rawValue
         self.sections.append(sec)
         self.sectionsNode.insertChild(sec, at: 0)
-        return sec
-    }
-    
-    func randColor() -> Int {
-        let colors = [0xffff66, 0xff6600, 0x33cc33, 0x00ccff, 0xcc66ff]
-        return colors[Int.random(in: 0...colors.count)]
     }
     
     func findNextPointIndex(currentIndex:Int) -> Int {
@@ -223,7 +207,7 @@ class Snake {
 
         if (self.queuedSections >= 1) {
             let last = self.sections.last!
-            _ = self.addSectionAtPosition(pos: last.position)
+            self.addSectionAtPosition(pos: last.position)
 
             // 动态增长效果
             let length = self.headPath.count

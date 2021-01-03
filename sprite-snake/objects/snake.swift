@@ -158,7 +158,7 @@ class Snake {
     }
 
     func addSectionAtPosition(pos: CGPoint, imageNamed: String = "circle.png") -> SKSpriteNode {
-        let sec = SKSpriteNode(imageNamed: imageNamed)
+        let sec = SKSpriteNode(imageNamed: imageNamed) // 60x60
         sec.name = "sections"
         sec.position = pos
         sec.setScale(self.scale)
@@ -269,7 +269,7 @@ class Snake {
         self.preferredDistance = Snake.distanceIndex * self.scale
         self.sections.forEach { $0.setScale(scale) }
         self.detector.setScale(scale)
-        self.eyes.setScale(scale)
+//        self.eyes.setScale(scale)
         self.shadow.setScale(scale)
     }
     

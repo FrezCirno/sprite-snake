@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 class Eye {
-    let scene: SKScene
+    let scene: BattleScene
     
     var whiteCircle = SKSpriteNode(imageNamed: "eye-white.png")
     var blackCircle = SKSpriteNode(imageNamed: "eye-black.png")
@@ -19,20 +19,15 @@ class Eye {
     let xoff: CGFloat
     let yoff: CGFloat
     
-    init(scene: SKScene, head: SKSpriteNode, xoff: CGFloat, yoff: CGFloat) {
+    init(scene: BattleScene, head: SKSpriteNode, xoff: CGFloat, yoff: CGFloat) {
         self.scene = scene
         self.head = head
         self.xoff = xoff
         self.yoff = yoff
-        self.whiteCircle.size.width = self.head.size.width * 0.9
-        self.whiteCircle.size.height = self.head.size.height * 0.9
         self.whiteCircle.zPosition = 9999
         self.head.addChild(self.whiteCircle)
-        self.blackCircle.size.width = self.whiteCircle.size.width * 0.9
-        self.blackCircle.size.height = self.whiteCircle.size.height * 0.9
         self.blackCircle.zPosition = 9999
         self.whiteCircle.addChild(self.blackCircle)
-        self.setScale(0.5)
     }
     
     func update() {
@@ -45,8 +40,7 @@ class Eye {
         // scale
         let radius = (self.whiteCircle.size.width - self.blackCircle.size.width) / 2
         
-        let scene = self.scene as! BattleScene
-        if let touchPos = scene.touchPos {
+        if let touchPos = self.scene.touchPos {
             let v_mouse = CGVector(dx: touchPos.x - self.head.position.x,
                                    dy: touchPos.y - self.head.position.y)
             let v_velocity = self.head.physicsBody!.velocity

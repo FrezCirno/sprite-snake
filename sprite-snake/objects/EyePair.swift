@@ -11,11 +11,11 @@ import SpriteKit
 
 class EyePair {
     var eyes = [Eye]()
-    let scene: SKScene
+    let scene: BattleScene
     let leftEye: Eye
     let rightEye: Eye
     
-    init(scene: SKScene, head: SKSpriteNode, scale: CGFloat) {
+    init(scene: BattleScene, head: SKSpriteNode, scale: CGFloat) {
         self.scene = scene
         self.leftEye = Eye(scene: scene, head: head, xoff: -0.5, yoff: 0.3)
         self.rightEye = Eye(scene: scene, head: head, xoff: 0.5, yoff: 0.3)

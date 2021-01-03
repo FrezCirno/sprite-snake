@@ -86,12 +86,10 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         // Label
         self.score.horizontalAlignmentMode = .left
         self.score.verticalAlignmentMode = .top
-        self.score.fontName = "Halogen"
         self.score.fontColor = .black
         
         self.scoreBoard.horizontalAlignmentMode = .right
         self.scoreBoard.verticalAlignmentMode = .top
-        self.scoreBoard.fontName = "Halogen"
         self.scoreBoard.fontColor = .black
         
         // 填充背景
@@ -155,6 +153,8 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
                 touchPos = t.location(in: self)
                 tapCount = t.tapCount
             }
+        } else if gameState == .Over {
+        
         }
     }
     
@@ -185,6 +185,26 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func gameover() {
+        let label = SKLabelNode(fontNamed: "halogen")
+        label.fontColor = .black
+        label.text = "Game over!"
+        label.position = self.cam.position
+        label.position.y += 50
+        addChild(label)
+        
+        let label2 = SKLabelNode(fontNamed: "halogen")
+        label2.fontColor = .black
+        label2.text = self.score.text
+        label2.horizontalAlignmentMode = .center
+        label2.position = self.cam.position
+        addChild(label2)
+        
+        self.score.alpha = 0
+        
+        self.gameState = .Over
+    }
+    
     func deleteSnake(_ snake: Snake) {
         if let index = self.snakes.firstIndex(where: { $0 === snake }) {
             self.snakes.remove(at: index)
@@ -192,6 +212,9 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
 //                // do sth
 //            }
             snake.root.removeFromParent()
+            if snake === self.controlledSnake {
+                self.gameover()
+            }
         }
     }
     
@@ -266,14 +289,12 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
             
         }
         
-        // var list = self.scene.snakes
-        //     .map(snake => ({ text: snake.label.text, size: snake.sectionGroup.getLength(), snake }))
-        //     .sort((a, b) => b.size - a.size)
-        //     .map((snake, index) => Phaser.Utils.String.Pad(index + 1, 3, ' ', 1) + '  ' + Phaser.Utils.String.Pad(snake.text, 10, ' ', 2) + snake.size)
-
-        // list.unshift('  #  Rank list')
-
-        // self.rank.setText(list)
+        let list = self.snakes
+            .sorted { $0.sections.count > $1.sections.count }
+            .map { $0.label.text! }
+        
+        self.scoreBoard.numberOfLines = list.count
+        self.scoreBoard.text = list.joined(separator: "\n")
         
     }
     

@@ -143,8 +143,6 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         
         // 跟随某个bot
         self.followedSnake = controlledSnake ?? self.snakes[0]
-//        self.cameras.main.startFollow(self.snakes[0].head)
-//            .setBounds(-self.worldsize[0] / 2, -self.worldsize[1] / 2, self.worldsize[0], self.worldsize[1])
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -258,13 +256,19 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         
         // update camera
         if let position = self.followedSnake?.head?.position {
-            self.cam.position = position
+            // World Bound
+            if abs(position.x) + self.deviceWidth / 2 <= self.worldSize.width / 2 {
+                self.cam.position.x = position.x
+            }
+            if abs(position.y) + self.deviceHeight / 2 <= self.worldSize.height / 2 {
+                self.cam.position.y = position.y
+            }
             
             // update label
-            self.score.position = CGPoint(x: position.x-deviceWidth/2+50,
-                                          y: position.y+deviceHeight/2-50)
-            self.scoreBoard.position = CGPoint(x: position.x+deviceWidth/2-50,
-                                               y: position.y+deviceHeight/2-50)
+            self.score.position = CGPoint(x: self.cam.position.x-deviceWidth/2+50,
+                                          y: self.cam.position.y+deviceHeight/2-50)
+            self.scoreBoard.position = CGPoint(x: self.cam.position.x+deviceWidth/2-50,
+                                               y: self.cam.position.y+deviceHeight/2-50)
             self.score.text = "Your Length: 0"
             self.scoreBoard.text = "Your Length: 0"
         }

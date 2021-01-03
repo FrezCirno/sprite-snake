@@ -41,6 +41,7 @@ class Shadow {
     func add(x: CGFloat, y: CGFloat) {
         let shadow = SKSpriteNode(imageNamed: "white-shadow.png")
         shadow.setScale(self.scale)
+        shadow.colorBlendFactor = 1
         self.shadows.append(shadow)
         self.shadowNode.addChild(shadow)
     }
@@ -60,6 +61,20 @@ class Shadow {
             shadow.position = pos
             lastPos = pos
         }
+        
+        //light up shadow with bright tints
+        if self.snake.speed == Snake.fastSpeed {
+            self.lightUpdateCount+=1
+            if self.lightUpdateCount >= self.updateLights {
+                self.lightUp()
+            }
+        }
+        //make shadow dark
+        else {
+            for shadow in self.shadows {
+                shadow.color = UIColor(red: 0xaa / 255, green: 0xaa / 255, blue: 0xaa / 255, alpha: 1)
+            }
+        }
     }
     
     /**
@@ -71,11 +86,9 @@ class Shadow {
             let shadow = self.shadows[i]
             if shadow.alpha > 0 {
                 if (i - self.lightStep) % self.maxLightStep == 0 {
-                    shadow.colorBlendFactor = 1
-                    shadow.color = UIColor(ciColor: CIColor(red: 22 / 255, green: 33 / 255, blue: 33 / 255))
+                    shadow.color = UIColor(red: 0x22 / 255, green: 0x33 / 255, blue: 0x33 / 255, alpha: 1)
                 } else {
-                    shadow.colorBlendFactor = 1
-                    shadow.color = UIColor(ciColor: CIColor(red: 55 / 255, green: 33 / 255, blue: 33 / 255))
+                    shadow.color = UIColor(red: 0x55 / 255, green: 0x33 / 255, blue: 0x33 / 255, alpha: 1)
                 }
             }
         }

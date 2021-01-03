@@ -85,17 +85,21 @@
         - .......
     - SKNode 蛇0（玩家）
         - SKLabelNode 名字标签
-        - SKSpriteNode 碰撞探测器
         - SKNode 蛇身
             - SKSpriteNode 蛇头
+                - SKSpriteNode 眼睛1
+                - SKSpriteNode 眼睛2
+                - SKSpriteNode 碰撞探测器
             - SKSpriteNode 蛇身1
             - SKSpriteNode 蛇身2
             - ......
     - SKNode 蛇1
         - SKLabelNode 名字标签
-        - SKSpriteNode 碰撞探测器
         - SKNode 蛇身
             - SKSpriteNode 蛇头
+                - SKSpriteNode 眼睛1
+                - SKSpriteNode 眼睛2
+                - SKSpriteNode 碰撞探测器
             - SKSpriteNode 蛇身1
             - SKSpriteNode 蛇身2
             - ......

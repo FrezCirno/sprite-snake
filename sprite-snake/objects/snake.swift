@@ -13,7 +13,7 @@ import GameplayKit
 
 class Snake {
     static let slowSpeed: CGFloat = 100
-    static let fastSpeed: CGFloat = 150
+    static let fastSpeed: CGFloat = 300
     static let rotateSpeed: CGFloat = 2
     static let initLength = 6
     static let distanceIndex: CGFloat = 17.0
@@ -35,6 +35,9 @@ class Snake {
     var sections = [SKSpriteNode]()
     var head: SKSpriteNode! = nil
     
+    var eyes: EyePair! = nil
+    var shadow: Shadow! = nil
+    
 //    var spriteKey = "circle"
     
     var detector = SKSpriteNode(color: .red, size: CGSize(width: 1, height: 1))
@@ -42,13 +45,10 @@ class Snake {
     
     var label = SKLabelNode()
     
-    let scene: SKScene
+    let scene: BattleScene
     
-    init(scene: SKScene, pos: CGPoint, name:String) {
-        
+    init(scene: BattleScene, pos: CGPoint, name:String) {
         self.scene = scene
-        
-        self.setScale(0.5)
         
         for _ in 0..<Snake.initLength {
             _ = self.addSectionAtPosition(pos: pos) // 60x60
@@ -58,15 +58,18 @@ class Snake {
         self.head.physicsBody?.categoryBitMask |= Category.Head.rawValue
         self.head.physicsBody?.collisionBitMask = 0
         self.head.physicsBody?.contactTestBitMask |= Category.Food.rawValue
+    
+        self.eyes = EyePair(scene: self.scene, head: self.head, scale: self.scale)
         self.root.addChild(self.sectionsNode)
         
         self.label.text = name
         self.label.fontColor = .black
+        self.label.zPosition = 9999
         self.root.addChild(self.label)
         
         self.detector.position = self.head!.position
         self.detector.size = self.head.size
-        self.detector.alpha = 0 // Hide
+        self.detector.alpha = 1 // Hide
         self.detector.setScale(self.scale)
         self.detector.userData = NSMutableDictionary()
         self.detector.userData?.setValue(self, forKey: "snake")
@@ -74,7 +77,10 @@ class Snake {
         self.detector.physicsBody?.categoryBitMask = Category.Detector.rawValue
         self.detector.physicsBody?.collisionBitMask = 0
         self.detector.physicsBody?.contactTestBitMask = Category.Sections.rawValue
-        self.root.addChild(self.detector)
+        self.head.addChild(self.detector)
+        
+        self.shadow = Shadow(scene: self.scene, snake: self, scale: self.scale)
+        self.setScale(0.5)
     }
     
     /**
@@ -83,10 +89,13 @@ class Snake {
     func update() {
         // 子类只需要设置蛇头的角速度和speed即可
         // 蛇的速度大小不会任意变化
-        let zRotation = self.head!.zRotation
+        
+        // 使速度方向（Velocity）与蛇头朝向（zRotation）一致
+        // 此处的速度是基于parent的坐标系（右上为正）
+        let zRotation = self.head.zRotation
         let dx = self.speed * cos(zRotation)
         let dy = self.speed * sin(zRotation)
-        self.head?.physicsBody?.velocity = CGVector(dx: dx, dy: dy)
+        self.head.physicsBody?.velocity = CGVector(dx: dx, dy: dy)
 
         // 把路径上的最后一个节点移到最开头
         if var point = self.headPath.popLast() {
@@ -138,8 +147,10 @@ class Snake {
         }
         
         self.label.position = CGPoint(x: self.head.position.x, y: self.head.position.y + 30)
-        self.detector.position.x = self.head.position.x + 40 * cos(self.head!.zRotation)
-        self.detector.position.y = self.head.position.y + 40 * sin(self.head!.zRotation)
+        self.detector.position = CGPoint(x: 40, y: 0)
+        
+        self.eyes.update()
+        self.shadow.update()
     }
     
     func destroy() {
@@ -156,6 +167,7 @@ class Snake {
                              blue: CGFloat.random(in: 0.5...1),
                              alpha: 1)
         sec.colorBlendFactor = 1
+        sec.zPosition = 100
         sec.userData = NSMutableDictionary()
         sec.userData?.setValue(self, forKey: "snake")
         sec.physicsBody = SKPhysicsBody(circleOfRadius: sec.size.width / 2)
@@ -224,7 +236,7 @@ class Snake {
                 }
             }
 
-//            self.shadow.add(last.x, last.y)
+            self.shadow.add(x: last.position.x, y: last.position.y)
 
             self.setScale(self.scale * 1.01);
             self.queuedSections-=1
@@ -233,7 +245,7 @@ class Snake {
             let last = self.sections.last!
 
             let loss = CGFloat.random(in: 0.5 ... -self.queuedSections)
-            _ = (self.scene as! BattleScene).createFood(amount: loss)
+            _ = self.scene.createFood(amount: loss)
 
             self.loss += loss
             if self.loss >= 1 {
@@ -255,6 +267,10 @@ class Snake {
     func setScale(_ scale: CGFloat) {
         self.scale = scale
         self.preferredDistance = Snake.distanceIndex * self.scale
+        self.sections.forEach { $0.setScale(scale) }
+        self.detector.setScale(scale)
+        self.eyes.setScale(scale)
+        self.shadow.setScale(scale)
     }
     
     func incrementSize(amount: CGFloat) {

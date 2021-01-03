@@ -27,11 +27,21 @@ public extension CGVector {
         return pow(p1.x-p2.x,2)+pow(p1.y-p2.y,2)
     }
     
-    func speed() -> CGFloat {
-        return sqrt(dx*dx+dy*dy)
+    func scale(by: CGFloat) -> CGVector {
+        return CGVector(dx: dx * by, dy: dy * by)
     }
     
-    func angle() -> CGFloat {
-        return atan2(dy, dx)
+    func nomalize() -> CGVector {
+        let len = self.length()
+        return CGVector(dx: dx / len, dy: dy / len)
+    }
+    
+    func asPoint() -> CGPoint {
+        return CGPoint(x: dx, y: dy)
+    }
+    
+    func proj(to: CGVector) -> CGFloat {
+        let res = project(SIMD2(x: Double(dx), y: Double(dy)), SIMD2(x: Double(to.dx), y: Double(to.dy)))
+        return CGFloat(res.x) / to.dx
     }
 }

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6C0CC67425A1415300F10FAA /* CGVector+Awesome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C0CC67325A1415300F10FAA /* CGVector+Awesome.swift */; };
+		6C9C531625A08E8700BC4292 /* EyePair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9C531525A08E8700BC4292 /* EyePair.swift */; };
+		6C9C531925A08F4700BC4292 /* Eye.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9C531825A08F4700BC4292 /* Eye.swift */; };
+		6C9C531C25A0C28C00BC4292 /* Shadow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9C531B25A0C28B00BC4292 /* Shadow.swift */; };
+		6C9C531F25A0C6F100BC4292 /* color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C9C531E25A0C6F100BC4292 /* color.swift */; };
 		6CAC6F33259EBB730048B3F9 /* BotSnake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F31259EBB720048B3F9 /* BotSnake.swift */; };
 		6CAC6F34259EBB730048B3F9 /* PlayerSnake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F32259EBB730048B3F9 /* PlayerSnake.swift */; };
 		6CAC6F38259EBB9B0048B3F9 /* Food.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CAC6F37259EBB9B0048B3F9 /* Food.swift */; };
@@ -29,6 +34,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6C0CC67325A1415300F10FAA /* CGVector+Awesome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGVector+Awesome.swift"; sourceTree = "<group>"; };
+		6C9C531525A08E8700BC4292 /* EyePair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EyePair.swift; sourceTree = "<group>"; };
+		6C9C531825A08F4700BC4292 /* Eye.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Eye.swift; sourceTree = "<group>"; };
+		6C9C531B25A0C28B00BC4292 /* Shadow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shadow.swift; sourceTree = "<group>"; };
+		6C9C531E25A0C6F100BC4292 /* color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = color.swift; sourceTree = "<group>"; };
 		6CAC6F31259EBB720048B3F9 /* BotSnake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BotSnake.swift; sourceTree = "<group>"; };
 		6CAC6F32259EBB730048B3F9 /* PlayerSnake.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerSnake.swift; sourceTree = "<group>"; };
 		6CAC6F37259EBB9B0048B3F9 /* Food.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Food.swift; sourceTree = "<group>"; };
@@ -69,6 +79,8 @@
 			children = (
 				6CAC6F44259ED20F0048B3F9 /* randName.swift */,
 				6CF74ADF259F9DBE002E7DD6 /* angleBetween.swift */,
+				6C9C531E25A0C6F100BC4292 /* color.swift */,
+				6C0CC67325A1415300F10FAA /* CGVector+Awesome.swift */,
 			);
 			path = extensions;
 			sourceTree = "<group>";
@@ -136,6 +148,9 @@
 				6CAC6F32259EBB730048B3F9 /* PlayerSnake.swift */,
 				ECBA5EAF259DDCB400973A05 /* Snake.swift */,
 				6CAC6F37259EBB9B0048B3F9 /* Food.swift */,
+				6C9C531525A08E8700BC4292 /* EyePair.swift */,
+				6C9C531825A08F4700BC4292 /* Eye.swift */,
+				6C9C531B25A0C28B00BC4292 /* Shadow.swift */,
 			);
 			path = objects;
 			sourceTree = "<group>";
@@ -216,17 +231,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C9C531925A08F4700BC4292 /* Eye.swift in Sources */,
 				6CAC6F45259ED20F0048B3F9 /* randName.swift in Sources */,
 				6CAC6F38259EBB9B0048B3F9 /* Food.swift in Sources */,
+				6C9C531F25A0C6F100BC4292 /* color.swift in Sources */,
 				ECBA5EB0259DDCB400973A05 /* Snake.swift in Sources */,
 				6CAC6F50259EF5040048B3F9 /* MenuScene.swift in Sources */,
+				6C9C531C25A0C28C00BC4292 /* Shadow.swift in Sources */,
 				6CF74AE0259F9DBE002E7DD6 /* angleBetween.swift in Sources */,
 				6CAC6F33259EBB730048B3F9 /* BotSnake.swift in Sources */,
 				EC4C6424259B3714008F3051 /* BattleScene.swift in Sources */,
+				6C0CC67425A1415300F10FAA /* CGVector+Awesome.swift in Sources */,
 				EC4C6426259B3714008F3051 /* GameViewController.swift in Sources */,
 				EC4C641E259B3714008F3051 /* AppDelegate.swift in Sources */,
 				6CF74AE7259FB3B3002E7DD6 /* Category.swift in Sources */,
 				6CAC6F34259EBB730048B3F9 /* PlayerSnake.swift in Sources */,
+				6C9C531625A08E8700BC4292 /* EyePair.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

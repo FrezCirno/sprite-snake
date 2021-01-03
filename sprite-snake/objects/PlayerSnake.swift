@@ -15,24 +15,10 @@ import GameplayKit
 
 class PlayerSnake: Snake {
 
-    var touchPos: CGPoint? = nil
-    
-    override init(scene: SKScene, pos: CGPoint, name: String) {
+    override init(scene: BattleScene, pos: CGPoint, name: String) {
         super.init(scene: scene, pos: pos, name: name)
     }
 
-    func touchDown(atPoint pos : CGPoint) {
-        touchPos = pos
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-        touchPos = pos
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-        touchPos = nil
-    }
-    
     /**
      * Add functionality to the original snake update method so that the player
      * can control where self snake goes
@@ -41,7 +27,7 @@ class PlayerSnake: Snake {
         let thisPos = self.head.position
         let rot = self.head.zRotation
         
-        if let touchPos = touchPos {
+        if let touchPos = self.scene.touchPos {
             let targetDirect = CGVector(dx: touchPos.x - thisPos.x, dy: touchPos.y - thisPos.y)
             var diff = atan2(targetDirect.dy, targetDirect.dx) - rot
             if diff > CGFloat.pi {
@@ -51,21 +37,16 @@ class PlayerSnake: Snake {
                 diff += 2 * CGFloat.pi
             }
             self.head.physicsBody?.angularVelocity = diff * Snake.rotateSpeed // 不断调整角速度以达到平滑转弯的效果
+            if self.scene.tapCount > 1 {
+                self.speed = Snake.fastSpeed
+            } else {
+                self.speed = Snake.slowSpeed
+            }
         } else {
             self.head.physicsBody?.angularVelocity = 0
+            self.speed = Snake.slowSpeed
         }
-
-        // self.status.setText('Your length: ' + self.sectionGroup.getLength())
-
-        // var list = self.scene.snakes
-        //     .map(snake => ({ text: snake.label.text, size: snake.sectionGroup.getLength(), snake }))
-        //     .sort((a, b) => b.size - a.size)
-        //     .map((snake, index) => Phaser.Utils.String.Pad(index + 1, 3, ' ', 1) + '  ' + Phaser.Utils.String.Pad(snake.text, 10, ' ', 2) + snake.size)
-
-        // list.unshift('  #  Rank list')
-
-        // self.rank.setText(list)
-
+        
         super.update()
     }
 

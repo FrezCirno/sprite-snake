@@ -25,10 +25,8 @@ class BotSnake: Snake {
     var trendRotation: CGFloat = 0
     
     
-    override init(scene: SKScene, pos: CGPoint, name:String) {
-        let _scene = scene as! BattleScene
-        
-        self.worldBoundCareness = CGFloat.random(in: 100...max(100,min(_scene.worldSize.width, _scene.worldSize.height)/50))
+    override init(scene: BattleScene, pos: CGPoint, name:String) {
+        self.worldBoundCareness = CGFloat.random(in: 100...max(100,min(scene.worldSize.width, scene.worldSize.height)/50))
         
         super.init(scene: scene, pos: pos, name: name)
     }
@@ -52,7 +50,7 @@ class BotSnake: Snake {
 
         let rotation = self.head!.zRotation // 当前的蛇头朝向(弧度),向右为0
         let pos = self.head!.position // 当前蛇头位置
-        let scene = self.scene as! BattleScene
+        let scene = self.scene
         
         // 吃食物
         let lb = vector2(Float(pos.x), Float(pos.y))

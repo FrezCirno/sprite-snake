@@ -28,18 +28,6 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
 //    var buttonRestart: MSButtonNode!
 //    var scoreLabel: SKLabelNode!
     
-    /* Timers */
-//    var sinceTouch: CFTimeInterval = 0
-//    var spawnTimer: CFTimeInterval = 0
-    
-    /* Game constants */
-//    let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS */
-//    let scrollSpeed: CGFloat = 160
-    
-    var entities = [GKEntity]()
-    
-    private var lastUpdateTime : TimeInterval = 0
-    
     /* Game management */
     var gameState: GameSceneState = .Running
     
@@ -61,9 +49,10 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     let deviceWidth = UIScreen.main.bounds.width
     let deviceHeight = UIScreen.main.bounds.height
     
-    override func sceneDidLoad() {
-        self.lastUpdateTime = 0
+    var touchPos: CGPoint? = nil
+    var tapCount = 0
     
+    override func sceneDidLoad() {
     }
     
     override func didMove(to view: SKView) {
@@ -85,7 +74,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     
     func create() {
         if (true) {
-            self.worldSize = CGSize(width: 800, height: 800)
+            self.worldSize = CGSize(width: 2000, height: 2000)
             self.foodCount = 10
             self.botCount = 3
         } else {
@@ -162,74 +151,87 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if gameState == .Running {
-            for t in touches { controlledSnake?.touchDown(atPoint: t.location(in: self)) }
+            for t in touches {
+                touchPos = t.location(in: self)
+                tapCount = t.tapCount
+            }
         }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if gameState == .Running {
-            for t in touches { controlledSnake?.touchMoved(toPoint: t.location(in: self)) }
+            for t in touches {
+                touchPos = t.location(in: self)
+                tapCount = t.tapCount
+            }
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if gameState == .Running {
-            for t in touches { controlledSnake?.touchUp(atPoint: t.location(in: self)) }
+//            for t in touches {
+                touchPos = nil
+                tapCount = 0
+//            }
         }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         if gameState == .Running {
-            for t in touches { controlledSnake?.touchUp(atPoint: t.location(in: self)) }
+//            for t in touches {
+                touchPos = nil
+                tapCount = 0
+//            }
         }
     }
     
     func deleteSnake(_ snake: Snake) {
-        if let index = self.snakes.firstIndex { $0 === snake } {
+        if let index = self.snakes.firstIndex(where: { $0 === snake }) {
             self.snakes.remove(at: index)
-            for snake in self.snakes {
-                // do sth
-            }
+//            for snake in self.snakes {
+//                // do sth
+//            }
             snake.root.removeFromParent()
         }
     }
     
+    func stuck(detector: SKSpriteNode, section: SKSpriteNode) {
+        let snake1 = detector.userData?.value(forKey: "snake") as! Snake
+        let snake2 = section.userData?.value(forKey: "snake") as! Snake
+        if snake1 === snake2 {
+            return
+        }
+        self.deleteSnake(snake1)
+    }
+    
+    func eatFood(head: SKSpriteNode, food: SKSpriteNode) {
+        let snake = head.userData?.value(forKey: "snake") as! Snake
+        let amount = food.userData?.value(forKey: "amount") as! CGFloat
+        snake.queuedSections += amount
+        self.foodQuadTree.remove(food)
+        food.removeFromParent()
+    }
+    
     func didBegin(_ contact: SKPhysicsContact) {
-        print("contact!")
         let bodyA = contact.bodyA
         let bodyB = contact.bodyB
-        let bitMap = Category(rawValue: bodyA.categoryBitMask | bodyB.categoryBitMask)
-        if bitMap.contains(.Detector) && bitMap.contains(.Sections) {
-            let snake = bodyA.node?.userData?.value(forKey: "snake") as! Snake
-            self.deleteSnake(snake)
+        let bitMapA = Category(rawValue: bodyA.categoryBitMask)
+        let bitMapB = Category(rawValue: bodyB.categoryBitMask)
+        if bitMapA.contains(.Detector) && bitMapB.contains(.Sections) {
+            stuck(detector: bodyA.node as! SKSpriteNode, section: bodyB.node as! SKSpriteNode)
         }
-        if bitMap.contains(.Food) && bitMap.contains(.Head) {
-            print("Eat food")
-            let snake = bodyB.node?.userData?.value(forKey: "snake") as! Snake
-            snake.queuedSections += bodyA.node?.userData?.value(forKey: "amount") as! CGFloat
-            self.foodQuadTree.remove(bodyA.node!)
-            bodyA.node!.removeFromParent()
+        if bitMapB.contains(.Detector) && bitMapA.contains(.Sections) {
+            stuck(detector: bodyB.node as! SKSpriteNode, section: bodyA.node as! SKSpriteNode)
+        }
+        if bitMapA.contains(.Head) && bitMapB.contains(.Food) {
+            eatFood(head: bodyA.node as! SKSpriteNode, food: bodyB.node as! SKSpriteNode)
+        }
+        if bitMapB.contains(.Head) && bitMapA.contains(.Food) {
+            eatFood(head: bodyB.node as! SKSpriteNode, food: bodyA.node as! SKSpriteNode)
         }
     }
     
-//    override func didSimulatePhysics() {
-//        for snake in snakes {
-//            if let body = snake.head.physicsBody {
-//                if (body.velocity.speed() > 0.01) {
-//                    snake.head.zRotation = body.velocity.angle()
-//                }
-//            }
-//        }
-//    }
-    
     override func update(_ currentTime: TimeInterval) {
-        // Initialize _lastUpdateTime if it has not already been
-        if (self.lastUpdateTime == 0) {
-            self.lastUpdateTime = currentTime
-        }
-        
-        // Calculate time since last update
-        let dt = currentTime - self.lastUpdateTime
         
         // update camera
         if let position = self.followedSnake?.head?.position {
@@ -259,7 +261,20 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
             _ = self.createFood(amount: 1)
         }
         
-        self.lastUpdateTime = currentTime
+        if let controlledSnake = self.controlledSnake {
+            self.score.text = "Your length: \(controlledSnake.sections.count)"
+            
+        }
+        
+        // var list = self.scene.snakes
+        //     .map(snake => ({ text: snake.label.text, size: snake.sectionGroup.getLength(), snake }))
+        //     .sort((a, b) => b.size - a.size)
+        //     .map((snake, index) => Phaser.Utils.String.Pad(index + 1, 3, ' ', 1) + '  ' + Phaser.Utils.String.Pad(snake.text, 10, ' ', 2) + snake.size)
+
+        // list.unshift('  #  Rank list')
+
+        // self.rank.setText(list)
+        
     }
     
     func randomPoint() -> CGPoint {

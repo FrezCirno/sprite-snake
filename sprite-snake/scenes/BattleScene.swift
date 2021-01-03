@@ -73,14 +73,14 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func create() {
-        if (true) {
+        if (false) {
             self.worldSize = CGSize(width: 2000, height: 2000)
             self.foodCount = 10
             self.botCount = 3
         } else {
             self.worldSize = CGSize(width: 5000, height: 5000)
             self.foodCount = 500
-            self.botCount = 20
+            self.botCount = 10
         }
         
         // Label
@@ -143,6 +143,13 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         
         // 跟随某个bot
         self.followedSnake = controlledSnake ?? self.snakes[0]
+        if let followedSnake = self.followedSnake {
+            let xsign: CGFloat = followedSnake.head.position.x < 0 ? -1 : 1
+            let ysign: CGFloat = followedSnake.head.position.y < 0 ? -1 : 1
+            self.cam.position.x = xsign * min(abs(followedSnake.head.position.x), self.worldSize.width / 2 - self.deviceWidth / 2)
+            self.cam.position.y = ysign * min(abs(followedSnake.head.position.y), self.worldSize.height / 2 - self.deviceHeight / 2)
+        }
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -275,6 +282,11 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         
         // update every snake
         for snake in self.snakes {
+            if abs(snake.head.position.x) + snake.head.size.width / 2 >= self.worldSize.width / 2
+                || abs(snake.head.position.y) + snake.head.size.height / 2 >= self.worldSize.height / 2 {
+                self.deleteSnake(snake)
+                continue
+            }
             snake.update()
         }
         
@@ -295,7 +307,8 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         
         let list = self.snakes
             .sorted { $0.sections.count > $1.sections.count }
-            .map { $0.label.text! }
+            .enumerated()
+            .map { "#\($0 + 1) " + $1.label.text! }
         
         self.scoreBoard.numberOfLines = list.count
         self.scoreBoard.text = list.joined(separator: "\n")

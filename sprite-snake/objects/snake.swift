@@ -67,8 +67,8 @@ class Snake {
         self.label.zPosition = 9999
         self.root.addChild(self.label)
         
-        self.detector.position = self.head!.position
-        self.detector.size = self.head.size
+        self.detector.position = CGPoint(x: self.head.size.width, y: 0)
+        self.detector.size = CGSize(width: self.head.size.width/10, height: self.head.size.height/10)
         self.detector.alpha = 1 // Hide
         self.detector.setScale(self.scale)
         self.detector.userData = NSMutableDictionary()
@@ -147,7 +147,7 @@ class Snake {
         }
         
         self.label.position = CGPoint(x: self.head.position.x, y: self.head.position.y + 30)
-        self.detector.position = CGPoint(x: 40, y: 0)
+        self.detector.position = CGPoint(x: self.head.size.width, y: 0)
         
         self.eyes.update()
         self.shadow.update()
@@ -175,7 +175,7 @@ class Snake {
         sec.physicsBody?.mass = 1
         sec.physicsBody?.categoryBitMask = Category.Sections.rawValue
         sec.physicsBody?.collisionBitMask = 0
-        sec.physicsBody?.contactTestBitMask = 0
+        sec.physicsBody?.contactTestBitMask = Category.Detector.rawValue
         self.sections.append(sec)
         self.sectionsNode.insertChild(sec, at: 0)
         return sec

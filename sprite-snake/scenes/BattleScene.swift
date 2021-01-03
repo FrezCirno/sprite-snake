@@ -213,10 +213,19 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
     func deleteSnake(_ snake: Snake) {
         if let index = self.snakes.firstIndex(where: { $0 === snake }) {
             self.snakes.remove(at: index)
+            snake.root.removeFromParent()
+            
+            for sec in snake.sections {
+                if (CGFloat.random(in: 0...1) > 0.5) {
+                    _ = self.createFood(
+                        pos: CGPoint(x: sec.position.x + CGFloat.random(in: -20...20), y: sec.position.y + CGFloat.random(in: -20...20))
+                    )
+                }
+            }
+            
 //            for snake in self.snakes {
 //                // do sth
 //            }
-            snake.root.removeFromParent()
             if snake === self.controlledSnake {
                 self.gameover()
             }
@@ -383,7 +392,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
      * @param  {number} y y-coordinate
      * @return {Food}   food object created
      */
-    func createFood(amount: CGFloat = CGFloat.random(in: 0.5..<1), key: String = "hex.png") -> Food {
+    func createFood(pos: CGPoint? = nil, amount: CGFloat = CGFloat.random(in: 0.5..<1), key: String = "hex.png") -> Food {
         let food = Food(imageNamed: key)
         food.color = UIColor(red: CGFloat.random(in: 0.5...1),
                              green: CGFloat.random(in: 0.5...1),
@@ -393,7 +402,7 @@ class BattleScene: SKScene, SKPhysicsContactDelegate {
         food.userData = NSMutableDictionary()
         food.userData?.setValue(amount, forKey: "amount")
         food.setScale(CGFloat(0.3 + amount))
-        food.position = self.randomPoint()
+        food.position = pos ?? self.randomPoint()
         food.physicsBody = SKPhysicsBody(circleOfRadius: food.xScale / 8)
         food.physicsBody?.categoryBitMask = Category.Food.rawValue
         food.physicsBody?.collisionBitMask = 0

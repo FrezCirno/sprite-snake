@@ -11,9 +11,7 @@ import Foundation
 public extension String {
 
     static func randName() -> String {
-        let names = ["Apple", "Banana", "Cat", "Trump",
-                     "Me", "Sun", "Snack", "Snnke",
-                     "Star", "Gabrielle", "Wright",
+        let names = ["Gabrielle", "Wright",
                      "Owen", "Ferguson", "Maria", "Knox",
                      "Sally", "Randall", "Kevin", "Walker",
                      "Brandon", "Morgan", "Kimberly", "Clark",

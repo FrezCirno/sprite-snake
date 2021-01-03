@@ -1,4 +1,4 @@
-#  设计思路
+#  SpriteKit Snake Game 设计思路
 
 ## 场景 Scene
 
